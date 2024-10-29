@@ -504,7 +504,6 @@ struct SimpleAction
 {
     bool run ()
     {
-        printSourceLocation ();
         return true;
     }
 };
@@ -627,6 +626,117 @@ constexpr auto get (impl_for<WithSummary, Tweet>)
 > [!NOTE]  
 > The short syntax also works for multiple methods and lambda implementations.
 
+We can now use the type in a function that requires both traits.
+
+```c++
+void post (is<WithAuthorAndSummary> auto const& message)
+{
+    auto withAuthorAndSummary = as<WithAuthorAndSummary> (message);
+    std::cout << std::format ("{}: {}\n", withAuthorAndSummary.author(), withAuthorAndSummary.summary());
+}
+
+auto postSomeTweet ()
+{
+    post (Tweet{"@elonmusk", "X > Twitter"});
+}
+```
+
+So far we've only talked about static polymorphism, but ...
+
+### traits work very well with runtime polymorphism 
+
+Introducing ... `some<'trait'>`
+
+`some<>` has value semantics like `std::any`, but offers a public API that is defined by the trait.
+You can think of `some<>` as generalization of `std::any` with `std::any` ~ `some<trait{}>`.
+`some<>` is implicit constructible from anything which implements the trait.
+
+```c++
+auto onlyCheck (some<Action>& action)
+{
+    if (not action.init ())
+        return false;
+
+    action.cleanup ();
+    return true;
+}
+
+auto onlyCheckForeignAction ()
+{
+    auto action = some<Action> {ForeignAction{}};
+    return check (action);
+}
+```
+
+> [!IMPORTANT]  
+> We no longer use static polymorphism and provide a function template, but some<> erases the concrete type and we only define a single (exportable) function.
+
+Another example.
+
+```c++
+struct FirstCallback
+{
+    void operator () () {}
+};
+
+struct SecondCallback
+{
+    void operator () () {}
+};
+
+auto invokeCallbacks ()
+{
+    std::vector<some<Callback>> someCallbacks;
+
+    someCallbacks.emplace_back (FirstCallback{});
+    someCallbacks.emplace_back (SecondCallback{});
+
+    for (auto& callback : someCallbacks)
+        callback ();
+}
+```
+
+Last example.
+
+```c++
+struct Foo
+{
+    void bar () {}
+    void bar () const {}
+    void bar (bool) {}
+    void bar (int const&) {}
+    void bar (int&) {}
+    void bar (int&&) {}
+    void bar (float) {}
+    void bar (double) {}
+};
+
+auto fooBar ()
+{
+    some<OverloadedConstness> overloadedConstness = Foo{};
+
+    std::as_const (overloadedConstness).bar();
+    overloadedConstness.bar();
+
+    some<OverloadedArgumentType> overloadedArgumentType = Foo{};
+
+    overloadedArgumentType.bar(1.0f);
+    overloadedArgumentType.bar(1.0);
+
+    some<OverloadedValueCategory> overloadedValueCategory = Foo{};
+
+    int i = 0;
+
+    overloadedValueCategory.bar(std::as_const (i));
+    overloadedValueCategory.bar(i);
+    overloadedValueCategory.bar(std::move (i));
+
+    some<OverloadedArity> overloadedArity = Foo{};
+
+    overloadedArity.bar(true);
+    overloadedArity.bar();
+}
+```
 
 
 ## License
