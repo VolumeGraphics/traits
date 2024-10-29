@@ -2,23 +2,12 @@
 
 Define shared behavior in a non-intrusive way while preserving value semantics.
 
+This library is inspired by [Rust Traits](https://doc.rust-lang.org/book/ch10-02-traits.html) and previous projects like [Dyno](https://github.com/ldionne/dyno).
+
 > [!CAUTION]
 > At this point, this library is experimental and it is a pure curiosity.
 > No stability of interface or quality of implementation is guaranteed.
 > Use at your own risks.
-
-**In general, it is a bad idea to implement such a feature at the library level:**
-- The code is not yet ready for production and probably never will be
-- The implementation is very complex and therefore difficult to maintain
-  - Only works with the help of (a few) macros
-  - Various workarounds for compiler bugs and language restrictions
-  - Probably also some serious bugs in the implementation
-- Often really bad error messages (not only but also because of the macros)
-- Poor compilation times and some annoying compiler warnings
-- Bad debugging experience
-- No additional support from the IDE
-- Only some of these problems could be mitigated, e.g. through precompiled traits
-
 
 ## Quick Start
 
@@ -69,6 +58,32 @@ int main()
         drawable.draw (std::cout);
 }
 ```
+
+## Motivation
+
+This project was primarily intended as a personal learning experience:
+- I wanted to explore ways to avoid accidental complexity
+- I was able to deepen my understanding of cross-language concepts and their implementation in other languages
+- I was able to become more familiar with many C++ features and learn techniques that are useful for other tasks
+
+**In general, it is a bad idea to implement such a feature at the library level:**
+- The code is not yet ready for production and probably never will be
+- The implementation is very complex and therefore difficult to maintain
+  - Only works with the help of (a few) macros
+  - Various workarounds for compiler bugs and language restrictions
+  - Probably also some serious bugs in the implementation
+- Often really bad error messages (not only but also because of the macros)
+- Poor compilation times and some annoying compiler warnings
+- Bad debugging experience
+- No additional support from the IDE
+- Only some of these problems could be mitigated, e.g. through precompiled traits
+
+> [!CAUTION]
+> **I therefore explicitly advise against using traits in productive applications.**
+
+While I am very happy with the outcome, such library-level implementations ultimately highlight the weaknesses of C++ and hopefully increase the incentives for the C++ committee to address these shortcomings in the language itself, as they emphasize the community's need for such features.
+
+This implementation shows once again that polymorphism can be easily combined with value semantics. In many cases, this reduces the amount of code that deals with dynamic memory allocation and thus potentially unsafe code. Ultimately, developers can concentrate more on the what and not on the how.
 
 ## <a name="compiler-req">Minimum Requirements for Compilers</a>
 
@@ -236,6 +251,23 @@ constexpr auto ValidatorFor = trait
 };
 
 constexpr auto IntValidator = ValidatorFor<int>;
+```
+
+### traits are composable
+
+traits can be combined with `+` (this syntax is borrowed from Rust)
+
+```c++
+void print (std::ostream& out, is<WithAuthor + WithSummary> auto const& article)
+{
+    out << std::format ("{} by {}\n", article.summary(), article.author());
+}
+```
+
+but they also support a boolean syntax
+
+```c++
+constexpr auto WithAuthorAndSummary = WithAuthor and WithSummary; // declare trait for later reuse
 ```
 
 ## License
