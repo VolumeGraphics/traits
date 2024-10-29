@@ -66,10 +66,14 @@ int main()
 This project was primarily intended as a personal learning experience:
 - I wanted to explore ways to avoid accidental complexity
 - I wanted to deepen my understanding of cross-language concepts and their implementation in other languages
-- I was able to become more familiar with many C++ features and learn techniques that are useful for other tasks
+- I wanted to become more familiar with current C++ features and learn techniques that are useful for other tasks
 
-**In general, it is a bad idea to implement such a feature at the library level:**
-- The code is not yet ready for production and probably never will be
+While I am very happy with the outcome, the resulting code is not yet ready for production and probably never will be.
+
+> [!CAUTION]
+> **You should not use this library in productive environments.**
+
+In general, it is a bad idea to implement such a feature at the library level:
 - The implementation is very complex and therefore difficult to maintain
   - Only works with the help of (a few) macros
   - Various workarounds for compiler bugs and language restrictions
@@ -80,10 +84,7 @@ This project was primarily intended as a personal learning experience:
 - No additional support from the IDE
 - Only some of these problems could be mitigated, e.g. through precompiled traits
 
-> [!CAUTION]
-> **I therefore explicitly advise against using this library in productive applications.**
-
-While I am very happy with the outcome, such library-level implementations ultimately highlight the weaknesses of C++ and hopefully increase the incentives for the C++ committee to address these shortcomings in the language itself, as they emphasize the community's need for such features.
+Such library-level implementations ultimately highlight the weaknesses of C++ and hopefully increase the incentives for the C++ committee to address these shortcomings in the language itself, as they emphasize the community's need for such features.
 
 This implementation shows once again that polymorphism can be easily combined with value semantics. In many cases, this reduces the amount of code that deals with dynamic memory allocation and thus potentially unsafe code. Ultimately, developers can concentrate more on the what and not on the how.
 
@@ -95,11 +96,13 @@ This implementation shows once again that polymorphism can be easily combined wi
 | gcc    | 13.3            | -std=c++20     |
 | MSVC   | 19.36           | /std:c++20     |
 
-## Using the library step by step
+## Using the library ... step by step
 
 All of the code below can be found in the [example](...).
 
 ### traits allow you to define shared behavior with a declarative syntax
+
+A trait defines the functionality a particular type has and can share with other types. We can use traits to define shared behavior in an abstract way.
 
 ```c++
 constexpr auto WithAuthor = trait
@@ -124,7 +127,12 @@ constexpr auto WithSummary = trait
 };
 ```
 
+> [!TIP]
+> Please always pay attention to the canonical spelling of method names. For example, no extra spaces should appear in overloaded operators.
+
 ### traits can be used to constrain generic types (static polymorphism)
+
+A type’s behavior consists of the methods we can call on that type. Different types share the same behavior if we can call the same methods on all of those types.
 
 Instead of ...
 
@@ -169,6 +177,8 @@ std::cout << Circle{3.0};
 ```
 
 ### traits can have multiple behaviors
+
+Trait definitions are a way to group method signatures together to define a set of behaviors necessary to accomplish some purpose.
 
 ```c++
 constexpr auto Runnable = trait
@@ -242,6 +252,9 @@ void myAlgorithm (is<Callback> auto& eventProcessing)
     //...
 }
 ```
+
+> [!TIP]
+> The function call operator does not have to be declared separately with `TRAITS_METHOD_DECLARATION(operator())`.
 
 ### traits can be templated
 
@@ -342,7 +355,7 @@ struct Any
 ```
 
 > [!NOTE]  
-> `is<constraint>` is equivalent to `is<trait{constraint}>`
+> `is<'constraint'>` is equivalent to `is<trait{'constraint'}>`
 
 #### constraints allow easy definition of variant types
 
