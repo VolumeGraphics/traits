@@ -16,7 +16,7 @@ Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/j
 
 <!-- Alternatively, you can install the library via [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/overview) or [conan](https://conan.io/), by searching for "proxy" (see [vcpkg.io](https://vcpkg.io/en/package/proxy) and [conan.io](https://conan.io/center/recipes/proxy)). -->
 
-### Example
+### Example usage
 
 ```c++
 #include <format>
@@ -150,7 +150,7 @@ decltype (auto) operator<< (std::ostream& stream, Drawable auto const& drawable)
 }
 ```
 
-... you can use the trait from the initial example above:
+... you can use a trait like the one in the initial example above:
 
 ```c++
 decltype (auto) operator<< (std::ostream& stream, is<Drawable> auto const& drawable)
@@ -293,6 +293,166 @@ constexpr auto StatelessAllocator = trait
     Method<"free" , void  (void* ptr) const>
 };
 ```
+
+#### constraints allow easy definition of derived constraints
+
+C++ concepts are not first class citizens at the moment:
+- you can't pass them as template parameters
+- it is complicated to define derived concepts
+
+Look at this example:
+
+```c++
+struct Any final
+{
+    Any (auto&& value); // OOPS ... clashes with copy/move constructor
+
+
+
+    // let's define a constructor which takes anything but ourselves instead
+
+    // 1. this syntax is currently not allowed
+    Any (not std::same_as<Any> auto&& value);
+
+    // 2. this syntax is somewhat awkward
+    Any (auto&& value) requires (not std::same_as<std::remove_cvref_t<decltype(value)>, Any>);
+
+    // 3. this syntax requires explicit definition of another concept, see below
+    Any (not_same_as<Any> auto&& value);
+};
+
+template <typename T, typename U>
+concept not_same_as = not std::same_as<T, U>;
+```
+
+On the other hand, with a constraint ...
+
+```c++
+template <typename U>
+constexpr auto SameAs = [] <typename T> () { return std::same_as<T, U>; };
+```
+
+... we can define derived constraints as required, because they support all common boolean operators:
+
+```c++
+struct Any
+{
+    Any (is<not SameAs<Any>> auto&& value);
+};
+```
+
+> [!NOTE]  
+> `is<constraint>` is equivalent to `is<trait{constraint}>`
+
+#### constraints allow easy definition of variant types
+
+Given a simple constraint:
+
+```c++
+template <typename... Types>
+requires (sizeof...(Types) > 1)
+constexpr auto OneOf = [] <typename T> () { return (... or std::same_as<T, Types>); };
+```
+
+We can easily define variant types.
+
+```c++
+void printArea (is<OneOf<Circle, Square>> auto shape)
+{
+    if constexpr (std::same_as<decltype (shape), Circle>)
+        std::cout << std::format ("Circle area = {}\n", std::numbers::pi * shape.radius * shape.radius);
+    else
+        std::cout << std::format ("Square area = {}\n", shape.length * shape.length);
+}
+```
+
+And use them as expected.
+
+```c++
+printArea (Circle{1.0});
+printArea (Square{2.0});
+```
+
+### traits support default method implementations
+
+Sometimes it’s useful to have default behavior for some or all of the methods in a trait instead of requiring implementations for all methods on every type. 
+
+```c++
+constexpr auto Action = trait
+{
+    Method<"run", bool()>,
+
+    // many actions don't need initialization
+    Method<"init", bool()> = [] ([[maybe_unused]] auto& action)
+    {
+        return true;
+    },
+
+    // cleanup neither
+    Method<"cleanup", void()> = [] ([[maybe_unused]] auto& action)
+    {
+    }
+};
+```
+
+However, instead of ...
+
+```c++
+auto run (is<Action> auto& action)
+{
+    if (not action.init ()) // OOPS ... may not compile
+        return false;
+
+    const bool ok = action.run();
+
+    action.cleanup (); // OOPS ... may not compile
+    return ok;
+}
+```
+
+... you'll then have to write:
+
+```c++
+auto run (is<Action> auto& action)
+{
+    auto action_impl = as<Action> (action); // OR: trait_cast<Action> (action)
+
+    if (not action_impl.init ())
+        return false;
+
+    const bool ok = action_impl.run();
+
+    action_impl.cleanup ();
+    return ok;
+}
+```
+
+`as<'trait'> (lvalue_ref)` creates a reference wrapper which provides all trait behaviors as public API.
+
+> [!TIP]
+> You should always access trait behaviors of an object via the reference wrapper (even when behaviors do not have a default implementation) because traits allow behaviors to be defined non-intrusively (see below).
+
+Now this code compiles and uses the given default implementations:
+
+```c++
+struct SimpleAction
+{
+    bool run ()
+    {
+        printSourceLocation ();
+        return true;
+    }
+};
+
+auto runSimpleAction ()
+{
+    auto action = SimpleAction{};
+    return run (action);
+}
+```
+
+
+
 
 ## License
 
