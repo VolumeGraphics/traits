@@ -133,7 +133,7 @@ decltype (auto) operator<< (std::ostream& stream, Drawable auto const& drawable)
 }
 ```
 
-... you can use the trait from the example above:
+... you can use the trait from the initial example above:
 
 ```c++
 decltype (auto) operator<< (std::ostream& stream, is<Drawable> auto const& drawable)
@@ -149,6 +149,93 @@ decltype (auto) operator<< (std::ostream& stream, is<Drawable> auto const& drawa
 And it will behave as expected:
 ```c++
 std::cout << Circle{3.0};
+```
+
+### traits can have multiple behaviors
+
+```c++
+constexpr auto Runnable = trait
+{
+    Method<"start", void()>,
+    Method<"stop", void()>,
+
+    Method<"isRunning", bool() const>,
+};
+
+void run (is<Runnable> auto& runnable)
+{
+    if (not runnable.isRunning())
+    {
+        runnable.start ();
+
+        // ...
+
+        runnable.stop ();
+    }
+}
+```
+
+### traits support overloaded methods 
+
+```c++
+constexpr auto OverloadedConstness = trait
+{
+    Method<"bar", void() const>,
+    Method<"bar", void()>,
+};
+
+constexpr auto OverloadedArgumentType = trait
+{
+    Method<"bar", void(float value)>,
+    Method<"bar", void(double value)>,
+};
+
+constexpr auto OverloadedValueCategory = trait
+{
+    Method<"bar", void(int const& lvalue)>,
+    Method<"bar", void(int& lvalue)>,
+    Method<"bar", void(int&& rvalue)>,
+};
+
+constexpr auto OverloadedArity = trait
+{
+    Method<"bar", void(bool value)>,
+    Method<"bar", void()>,
+};
+```
+
+### traits support (certain) overloaded operators
+
+```c++
+constexpr auto Callback = trait
+{
+    Method<"operator()", void()>,
+};
+
+void myAlgorithm (is<Callback> auto& eventProcessing)
+{
+    // ...
+
+    eventProcessing();
+
+    // ...
+
+    eventProcessing();
+
+    //...
+}
+```
+
+### a trait can be templated
+
+```c++
+template <typename T>
+constexpr auto ValidatorFor = trait
+{
+    Method<"check", bool(T const&) const>,
+};
+
+constexpr auto IntValidator = ValidatorFor<int>;
 ```
 
 ## License
