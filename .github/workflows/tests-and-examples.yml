@@ -1,0 +1,26 @@
+name: tests and examples
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        description: 'Operating system to run the job on (ubuntu-latest, windows-latest, macos-latest)'
+        required: true
+        type: string
+      cxx_compilers:
+        description: 'List of compilers to use'
+        required: true
+        type: string
+
+jobs:
+  tests:
+    uses: ./.github/workflows/tests.yml
+    with:
+      os: '${{ inputs.os }}'
+      cxx_compilers: '${{ inputs.cxx_compilers }}'
+
+  examples:
+    uses: ./.github/workflows/examples.yml
+    with:
+      os: '${{ inputs.os }}'
+      cxx_compilers: '${{ inputs.cxx_compilers }}'

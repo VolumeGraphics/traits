@@ -1,0 +1,14 @@
+name: macos
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  tests-and-examples:
+    uses: ./.github/workflows/tests-and-examples.yml
+    with:
+      os: 'macos-15'
+      cxx_compilers: '["clang++"]'

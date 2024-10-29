@@ -1,0 +1,14 @@
+name: linux
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  tests-and-examples:
+    uses: ./.github/workflows/tests-and-examples.yml
+    with:
+      os: 'ubuntu-24.04'
+      cxx_compilers: '["g++-14", "clang++-17"]'

@@ -1,0 +1,14 @@
+name: windows
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  tests-and-examples:
+    uses: ./.github/workflows/tests-and-examples.yml
+    with:
+      os: 'windows-2022'
+      cxx_compilers: '["cl"]'
