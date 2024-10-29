@@ -63,7 +63,7 @@ int main()
 
 This project was primarily intended as a personal learning experience:
 - I wanted to explore ways to avoid accidental complexity
-- I was able to deepen my understanding of cross-language concepts and their implementation in other languages
+- I wanted to deepen my understanding of cross-language concepts and their implementation in other languages
 - I was able to become more familiar with many C++ features and learn techniques that are useful for other tasks
 
 **In general, it is a bad idea to implement such a feature at the library level:**
@@ -79,7 +79,7 @@ This project was primarily intended as a personal learning experience:
 - Only some of these problems could be mitigated, e.g. through precompiled traits
 
 > [!CAUTION]
-> **I therefore explicitly advise against using traits in productive applications.**
+> **I therefore explicitly advise against using this library in productive applications.**
 
 While I am very happy with the outcome, such library-level implementations ultimately highlight the weaknesses of C++ and hopefully increase the incentives for the C++ committee to address these shortcomings in the language itself, as they emphasize the community's need for such features.
 
@@ -241,7 +241,7 @@ void myAlgorithm (is<Callback> auto& eventProcessing)
 }
 ```
 
-### a trait can be templated
+### traits can be templated
 
 ```c++
 template <typename T>
@@ -268,6 +268,28 @@ but they also support a boolean syntax
 
 ```c++
 constexpr auto WithAuthorAndSummary = WithAuthor and WithSummary; // declare trait for later reuse
+```
+
+### traits support an optional type constraint (first parameter)
+
+A constraint is a templated callable: `<typename> () -> bool`
+
+```c++
+constexpr auto DefaultConstructible = [] <typename T> () { return std::is_default_constructible_v<T>; };
+```
+
+Constraints can be used to check arbitrary type properties.
+
+```c++
+constexpr auto Empty = [] <typename T> () { return std::is_empty_v<T>; };
+
+constexpr auto StatelessAllocator = trait
+{
+    Empty and DefaultConstructible,
+
+    Method<"alloc", void* (std::size_t byteCount) const>,
+    Method<"free" , void  (void* ptr) const>
+};
 ```
 
 ## License
