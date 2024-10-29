@@ -71,7 +71,7 @@ This project was primarily intended as a personal learning experience:
 While I am very happy with the outcome, the resulting code is not yet ready for production and probably never will be.
 
 > [!CAUTION]
-> **You should not use this library in productive environments.**
+> **You should *NOT* use this library in productive environments.**
 
 In general, it is a bad idea to implement such a feature at the library level:
 - The implementation is very complex and therefore difficult to maintain
