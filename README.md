@@ -12,7 +12,7 @@ This library is inspired by [Rust Traits](https://doc.rust-lang.org/book/ch10-02
 ## Quick Start
 
 *traits* is a header-only C++20 library. To use the library, make sure your compiler meets the [minimum requirements](#compiler-req) and just include the header file [traits.h](https://github.com/VolumeGraphics/traits/blob/main/traits.h) in your source code.
-Alternatively, you can evaluate the library directly in [Compiler Explorer](https://godbolt.org/...).
+Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/jGoM3jeob).
 
 <!-- Alternatively, you can install the library via [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/overview) or [conan](https://conan.io/), by searching for "proxy" (see [vcpkg.io](https://vcpkg.io/en/package/proxy) and [conan.io](https://conan.io/center/recipes/proxy)). -->
 
@@ -21,8 +21,10 @@ Alternatively, you can evaluate the library directly in [Compiler Explorer](http
 ```c++
 #include <format>
 #include <iostream>
+#include <vector>
 
-#include "traits.h"
+#include <https://raw.githubusercontent.com/VolumeGraphics/traits/refs/heads/main/traits.h>
+using namespace traits;
 
 constexpr auto Drawable = trait
 {
