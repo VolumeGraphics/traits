@@ -88,6 +88,15 @@ Such library-level implementations ultimately highlight the weaknesses of C++ an
 
 This implementation shows once again that polymorphism can be easily combined with value semantics. In many cases, this reduces the amount of code that deals with dynamic memory allocation and thus potentially unsafe code. Ultimately, developers can concentrate more on the what and not on the how.
 
+## Related projects
+
+There have been some exciting projects dedicated to this topic for a long time. But new implementations are also emerging more recently:
+
+- [Dyno: Runtime polymorphism done right](https://github.com/ldionne/dyno)
+- [Proxy: Next Generation Polymorphism in C++](https://github.com/microsoft/proxy)
+
+You might also take also a look at the rust documentation to get familiar with the basic idea of [traits](https://doc.rust-lang.org/book/ch10-02-traits.html). Some explanations from there have been included in this documentation.
+
 ## <a name="compiler-req">Minimum Requirements for Compilers</a>
 
 | Family | Minimum version | Required flags |
@@ -98,7 +107,7 @@ This implementation shows once again that polymorphism can be easily combined wi
 
 ## Using the library ... step by step
 
-All of the code below can be found in the [example](...).
+All of the code below can be found in the [example](https://github.com/VolumeGraphics/traits/blob/main/example/readme.cpp).
 
 ### traits allow you to define shared behavior with a declarative syntax
 
@@ -625,8 +634,3 @@ constexpr auto get (impl_for<WithSummary, Tweet>)
 *traits* is BSD-3 licensed, as found in the [LICENSE][l] file.
 
 [l]: https://github.com/VolumeGraphics/traits/blob/main/LICENSE
-
-## Related projects
-
-- [Dyno: Runtime polymorphism done right](https://github.com/ldionne/dyno)
-- [Proxy: Next Generation Polymorphism in C++](https://github.com/microsoft/proxy)
