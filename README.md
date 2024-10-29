@@ -357,6 +357,26 @@ struct Any
 > [!NOTE]  
 > `is<'constraint'>` is equivalent to `is<trait{'constraint'}>`
 
+#### constraints can be used to force strong(er) coupling
+
+It may be advantageous to manage all implementations of a trait in a class hierarchy because, for example, the IDE supports inheritance particularly well.
+
+```c++
+template <typename Interface>
+constexpr auto DerivedFrom = [] <typename T> () { return std::derived_from<T, Interface>; };
+
+struct TestableMarker
+{        
+};
+
+constexpr auto Testable = trait
+{
+    DerivedFrom<TestableMarker>, // make it easier to find all testable elements in the code base
+
+    Method<"runTests", bool() const>,
+};
+```
+
 #### constraints allow easy definition of variant types
 
 Given a simple constraint:
@@ -385,6 +405,29 @@ And use them as expected.
 printArea (Circle{1.0});
 printArea (Square{2.0});
 ```
+
+> [!NOTE]  
+> There is a bug in the current MSVC compilers, so the constraint should actually be written as follows:
+> ```c++
+> // template <typename... Types>
+> // requires (sizeof...(Types) > 1)
+> // constexpr auto OneOf = [] <typename T> () { return (... or std::same_as<T, Types>); };
+>
+> template <typename... Types>
+> requires (sizeof...(Types) > 1)
+> struct one_of
+> {
+>     template <typename T>
+>     constexpr auto operator() () const noexcept
+>     {
+>         return (... or std::same_as<T, Types>);
+>     }
+> };
+>
+> template <typename... Types>
+> requires (sizeof...(Types) > 1)
+> constexpr auto OneOf = one_of<Types...>{};
+> ```
 
 ### traits support default method implementations
 
@@ -423,7 +466,7 @@ auto run (is<Action> auto& action)
 }
 ```
 
-... you'll then have to write:
+... you’ll then have to write:
 
 ```c++
 auto run (is<Action> auto& action)
@@ -464,6 +507,116 @@ auto runSimpleAction ()
 }
 ```
 
+### traits allow you to implement behavior in a non-intrusive manner
+
+Given some type for which we want to support all `Action` behaviors from above ...
+
+```c++
+struct ForeignAction
+{
+    enum class Status { Failed, Ok };
+
+    auto execute ()
+    {
+        if (not ready)
+            return Status::Failed;
+
+        // ...
+
+        return Status::Ok;
+    }
+
+    bool ready{false};
+};
+```
+
+... we can provide an implementation of the `Action` trait in the same namespace (so ADL kicks in):
+
+```c++
+constexpr auto get (impl_for<Action, ForeignAction>)
+{
+    return impl
+    {
+        "run"_method = [] (ForeignAction& action) -> bool
+        {
+            return action.execute () == ForeignAction::Status::Ok;
+        },
+        "init"_method = [] (ForeignAction& action) -> bool
+        {
+            action.ready = true;
+            return true;
+        },
+        "cleanup"_method = [] (ForeignAction& action) -> void
+        {
+            action.ready = false;
+        }
+    };
+}
+```
+
+> [!NOTE]  
+> `"..."_method` is a user-defined string literal to make the code more readable. You can also use the `Method<"..."> =` syntax which is a bit more consistent with the trait definition syntax.
+
+> [!IMPORTANT]  
+> You must provide an implementation for all behaviors which do not already have a default implementation, but you can override a default behavior of course.
+
+Let’s test it:
+
+```c++
+auto runForeignAction ()
+{
+    auto action = ForeignAction{};
+    return run (action);
+}
+```
+
+A trait implementation is also valid for all derived types, unless there is a more specialized implementation.
+
+```c++
+struct DerivedForeignAction : ForeignAction
+{
+};
+
+auto runDerivedForeignAction ()
+{
+    auto action = DerivedForeignAction{};
+    return run (action);
+}
+```
+
+Let’s give another example:
+
+```c++
+struct Tweet
+{
+    std::string user;
+    std::string text;
+
+    static auto getUser (Tweet const& tweet) { return tweet.user; }
+    static auto getText (Tweet const& tweet) { return tweet.text; }
+};
+```
+
+You can also use function pointers instead of lambdas.
+
+```c++
+constexpr auto get (impl_for<WithAuthor, Tweet>)
+{
+    return impl { "author"_method = &Tweet::getUser };
+}
+```
+
+A slightly more compact syntax is also valid, because `impl` is only an optional wrapper to make the code more explicit.
+
+```c++
+constexpr auto get (impl_for<WithSummary, Tweet>)
+{
+    return "summary"_method = &Tweet::getText;
+}
+```
+
+> [!NOTE]  
+> The short syntax also works for multiple methods and lambda implementations.
 
 
 
