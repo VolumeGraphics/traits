@@ -758,21 +758,103 @@ auto fooBar ()
 
 ## Advanced usage concepts
 
+### precise control of the memory requirements
+`some<>` offers the following customization options:
+- small buffer optimization
+- inlined methods
+
+### explicit support for variant types
+
+For a number of reasons, it makes sense to explicitly support `some<>` variant types and offer an alternative to `std::variant`:
+- if you want to centrally define not only the possible types, but also the possible behaviors on these types
+- if you want to implement the variant behaviors separately for each type
+- if you require a different memory model for your variant type
+
+`some_variant<'Types'...>` is a type alias for a specially constrained `some<>` type that can be used as a replacement for `std::variant`.
+`some<>` provides a `visit()` overload for this purpose:
+
+```c++
+void printCircumference (some_variant<Circle, Square> const& shape)
+{
+    visit (overload // famous overload pattern
+    {
+        [] (Circle const& circle)
+        {
+            std::cout << std::format ("Circle circumference = {}\n", std::numbers::pi * 2.0 * circle.radius);
+        },
+        [] (Square const& square)
+        {
+            std::cout << std::format ("Square circumference = {}\n", 4.0 * square.length);
+        }
+    }, shape);
+}
+
+auto printCircumferenceOfShapes ()
+{
+    printCircumference (Circle{1.0});
+    printCircumference (Square{2.0});
+}
+```
+
+`some_variant<>` provides no dedicated API other than `visit()`.
+The size of a `some_variant<>` is large enough to store all alternatives inplace.
+
+However, you can also define `some_variant<>`s with additional constraints and behaviors or customized storage.
+`some<>` offers a special type alias template for this purpose:
+
+```c++
+constexpr auto WithType = trait
+{
+    Method<"type", std::string () const>
+};
+
+using Shape = some<WithType>::variant<Circle, Square>;
+
+constexpr auto get (impl_for<WithType, Circle>)
+{
+    return "type"_method = [] (Circle const&) -> std::string { return "Circle"; };
+}
+
+constexpr auto get (impl_for<WithType, Square>)
+{
+    return "type"_method = [] (Square const&) -> std::string { return "Square"; };
+}
+
+void printType (Shape const& shape)
+{
+    std::cout << std::format ("Type = {}\n", shape.type ());
+}
+
+auto printName ()
+{
+    printType (Circle{1.0});
+    printType (Square{2.0});
+}
+```
+
+## Implementation notes
+
+The current implementation defines the following C++ concepts:
+- `function_type`: a function signature
+- `callable`: every valid `std::function` target
+
 ## Open issues
 
 Here is a list of possible improvements, in no particular order:
 - constraints: add support for all boolean operators
+- behaviors: add support for more overloaded operators, esp. `operator<<`
 - function types: add support for noexcept
 - function types: add support for volatile
 - `some<>`: add conversion from `some<>` other type
-- add support for more overloaded operators, esp. `operator<<`
+- `some<>`: improve syntax for inlined methods
 - implementation: remove dependency to std::tuple
 - implementation: remove dependency to std::variant
 - implementation: do not use unnamed inline namespaces
 - implementation: move method_kernel into method_name ?
-- implementation: hide non-public stuff in detail namespace
+- implementation: hide non-public stuff in a detail namespace
 - implementation: better check for canonical method names
-
+- tests: check macro syntax with method inlining and trait implementations
+ 
 ## Known limitations
 
 Here is a list of known problems:
