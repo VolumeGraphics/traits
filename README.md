@@ -23,7 +23,7 @@ Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/j
 #include <iostream>
 #include <vector>
 
-#include <https://raw.githubusercontent.com/VolumeGraphics/traits/refs/heads/main/traits.h>
+#include "traits.h"
 using namespace traits;
 
 constexpr auto Drawable = trait
@@ -63,6 +63,10 @@ int main()
 
 ## Motivation
 
+Polymorphism is probably used too often. Nevertheless, it remains a useful concept for numerous use cases. Unfortunately, the standard approach to runtime polymorphism in C++ has some disadvantages, as many have already pointed out.
+
+For example, polymorphism via inheritance breaks value semantics and typically forces you to use dynamic memory management. This not only harbors risks for unsafe code (e.g. in the case of ignorance of modern language concepts), but above all leads to unnecessary complexity.
+
 This project was primarily intended as a personal learning experience:
 - I wanted to explore ways to avoid accidental complexity
 - I wanted to deepen my understanding of cross-language concepts and their implementation in other languages
@@ -90,11 +94,16 @@ This implementation shows once again that polymorphism can be easily combined wi
 
 ## Related projects
 
-There have been some exciting projects dedicated to this topic for a long time. But new implementations are also emerging more recently:
-
+There have been some exciting projects dedicated to this topic for a long time:
 - [Dyno: Runtime polymorphism done right](https://github.com/ldionne/dyno)
-- [Proxy: Next Generation Polymorphism in C++](https://github.com/microsoft/proxy)
+- [Boost.TypeErasure](https://www.boost.org/doc/libs/1_86_0/doc/html/boost_typeerasure.html)
+- ...
 
+But new implementations are also emerging more recently, e.g. [Proxy: Next Generation Polymorphism in C++](https://github.com/microsoft/proxy).
+
+Ideas for offering this feature at the language level seem to make the most sense:
+- [Typeclasses in C++](https://github.com/TartanLlama/typeclasses)
+ 
 You might also take also a look at the rust documentation to get familiar with the basic idea of [traits](https://doc.rust-lang.org/book/ch10-02-traits.html). Some explanations from there have been included in this documentation.
 
 ## <a name="compiler-req">Minimum Requirements for Compilers</a>
@@ -105,7 +114,7 @@ You might also take also a look at the rust documentation to get familiar with t
 | gcc    | 13.3            | -std=c++20     |
 | MSVC   | 19.36           | /std:c++20     |
 
-## Using the library ... step by step
+## Basic usage ... step by step
 
 All of the code below can be found in the [example](https://github.com/VolumeGraphics/traits/blob/main/example/readme.cpp).
 
@@ -738,7 +747,28 @@ auto fooBar ()
 }
 ```
 
+## Advanced usage concepts
 
+## Open issues
+
+Here is a list of possible improvements, in no particular order:
+- constraints: add support for all boolean operators
+- function types: add support for noexcept
+- function types: add support for volatile
+- `some<>`: add conversion from `some<>` other type
+- add support for more overloaded operators, esp. `operator<<`
+- implememtation: remove dependency to std::tuple
+- implementation: remove dependency to std::variant
+- implementation: do not use unnamed inline namespaces
+- implementation: move method_kernel into method_name ?
+- implementation: hide non-public stuff in detail namespace
+- implementation: better check for canonical method names
+
+## Known limitations
+
+Here is a list of known problems:
+- *clang* generates a warning for unused traits, so they must be annotated with `[[maybe_unused]]` or the warnings must be suppressed in some other way
+ 
 ## License
 
 *traits* is BSD-3 licensed, as found in the [LICENSE][l] file.
