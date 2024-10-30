@@ -116,7 +116,7 @@ You might also take also a look at the rust documentation to get familiar with t
 | gcc    | 13.3            | -std=c++20     |
 | MSVC   | 19.36           | /std:c++20     |
 
-## Basic usage ... step by step
+## Using the library ... step by step
 
 All of the code below can be found in the [example](https://github.com/VolumeGraphics/traits/blob/main/example/readme.cpp).
 
@@ -757,7 +757,7 @@ auto fooBar ()
 }
 ```
 
-## Advanced usage concepts
+## Using the library ... advanced concepts
 
 ### precise control of the memory requirements
 `some<>` offers the following customization options:
