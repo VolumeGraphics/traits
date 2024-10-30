@@ -18,6 +18,8 @@ Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/j
 
 ### Example usage
 
+A trait defines the functionality a particular type has and can share with other types. We can use traits to define shared behavior in an abstract way.
+
 ```c++
 #include <format>
 #include <iostream>
@@ -118,9 +120,12 @@ You might also take also a look at the rust documentation to get familiar with t
 
 All of the code below can be found in the [example](https://github.com/VolumeGraphics/traits/blob/main/example/readme.cpp).
 
+> [!NOTE]
+> To keep this overview compact, definitions that have already been used in previous examples are not repeated. It is therefore highly recommended that you read all the examples in sequence.
+
 ### traits allow you to define shared behavior with a declarative syntax
 
-A trait defines the functionality a particular type has and can share with other types. We can use traits to define shared behavior in an abstract way.
+A type’s behavior consists of the methods we can call on that type.
 
 ```c++
 constexpr auto WithAuthor = trait
@@ -129,8 +134,10 @@ constexpr auto WithAuthor = trait
 };
 ```
 
+Every method is uniquely identified by its signature, which consists of a name and a function type.
+
 > [!IMPORTANT]  
-> To be able to use this syntax, you must first declare the method name in the global namespace with the help of a macro.
+> `Method<>` refers to a predefined variable template. To be able to use this syntax, you must first declare the method name in the global namespace with the help of a macro.
 
 ```c++
 TRAITS_METHOD_DECLARATION(author);
@@ -150,7 +157,7 @@ constexpr auto WithSummary = trait
 
 ### traits can be used to constrain generic types (static polymorphism)
 
-A type’s behavior consists of the methods we can call on that type. Different types share the same behavior if we can call the same methods on all of those types.
+Different types share the same behavior if we can call the same methods on all of those types.
 
 Instead of ...
 
@@ -189,7 +196,7 @@ decltype (auto) operator<< (std::ostream& stream, is<Drawable> auto const& drawa
 > [!NOTE]  
 > `is<'trait'>` denotes a C++ concept
 
-And it will behave as expected:
+And thus this code will behave as expected :
 ```c++
 std::cout << Circle{3.0};
 ```
@@ -288,7 +295,7 @@ constexpr auto IntValidator = ValidatorFor<int>;
 
 ### traits are composable
 
-traits can be combined with `+` (this syntax is borrowed from Rust)
+traits can be combined with `+` (this syntax is borrowed from Rust) ...
 
 ```c++
 void print (std::ostream& out, is<WithAuthor + WithSummary> auto const& article)
@@ -297,7 +304,7 @@ void print (std::ostream& out, is<WithAuthor + WithSummary> auto const& article)
 }
 ```
 
-but they also support a boolean syntax
+... but they also support a boolean syntax:
 
 ```c++
 constexpr auto WithAuthorAndSummary = WithAuthor and WithSummary; // declare trait for later reuse
@@ -572,7 +579,9 @@ constexpr auto get (impl_for<Action, ForeignAction>)
 ```
 
 > [!NOTE]  
-> `"..."_method` is a user-defined string literal to make the code more readable. You can also use the `Method<"..."> =` syntax which is a bit more consistent with the trait definition syntax.
+> `"..."_method` is a user-defined string literal to make the code more readable.
+> You can also use the `Method<"..."> =` syntax which is a bit more consistent with the trait definition syntax.
+> However, make sure that you omit the parameter for the function type, as this is automatically derived.
 
 > [!IMPORTANT]  
 > You must provide an implementation for all behaviors which do not already have a default implementation, but you can override a default behavior of course.
@@ -677,8 +686,8 @@ auto onlyCheckForeignAction ()
 }
 ```
 
-> [!IMPORTANT]  
-> We no longer use static polymorphism and provide a function template, but some<> erases the concrete type and we only define a single (exportable) function.
+> [!NOTE]  
+> Here we no longer use static polymorphism and provide a function template, but `some<>` erases the concrete type and we only define a single (exportable) function.
 
 Another example.
 
