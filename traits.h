@@ -9,24 +9,6 @@
 #include <utility>
 #include <variant>
 
-// TODO
-
-// remove dependency to std::tuple
-// remove dependency to std::variant
-// add support for noexcept to function types
-// inlined { Method<"check"> } should be possible
-// inlined { "check"_method } should be possible
-// test macro syntax with inlining and trait implementation
-
-// allow some<> copy/move constructor with some<> other type
-// move MethodKernel into MethodName?!
-// alles unnötige in den detail namespace verschieben
-// normalize identifier, nur kanonische Schreibweise erlaubt!
-// predefined method names
-// operator<< not working
-// drawbacks: unused variable compiler warings 
-
-
 // high level design overview:
 
 // void (), is_function_type => function_type
