@@ -766,7 +766,7 @@ Here is a list of possible improvements, in no particular order:
 - function types: add support for volatile
 - `some<>`: add conversion from `some<>` other type
 - add support for more overloaded operators, esp. `operator<<`
-- implememtation: remove dependency to std::tuple
+- implementation: remove dependency to std::tuple
 - implementation: remove dependency to std::variant
 - implementation: do not use unnamed inline namespaces
 - implementation: move method_kernel into method_name ?
