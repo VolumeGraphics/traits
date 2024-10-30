@@ -32,21 +32,11 @@
 // Method<>
 // TRAITS_METHOD()
 
-
-
-
-
-// Traits for C++
-
 namespace traits
 {
     struct undefined{};
 
-
-
-
-
-    inline namespace // structural_tuple
+    inline namespace tuple
     {
         template <std::size_t, typename Element>
         struct structural_tuple_leaf
@@ -130,11 +120,7 @@ namespace traits
         concept disjoint_from = std::same_as<structural_tuple_without_all_from_t<decltype(Tuple), decltype(OtherTuple)>, decltype(Tuple)>;
     }
 
-
-
-
-
-    inline namespace // type_traits
+    inline namespace type_traits
     {
         template <std::size_t Index, typename... Types>
         struct nth_available : std::false_type {};
@@ -150,11 +136,7 @@ namespace traits
         using nth_t = typename nth<Index, Types...>::type;
     }
 
-
-
-
-
-    inline namespace // functional
+    inline namespace functional
     {
         template<typename... Ts> struct overload : Ts... { using Ts::operator()...; };
         template<typename... Ts> overload(Ts...) -> overload<Ts...>;
@@ -321,11 +303,7 @@ namespace traits
         using make_callable_t = typename make_callable<Object, FunctionType, Impl>::type;
     }
 
-
-
-
-
-    inline namespace // name
+    inline namespace methods
     {
         template <std::size_t N>
         requires (N > 1)
@@ -349,11 +327,7 @@ namespace traits
         };
     }
 
-
-
-
-
-    inline namespace // method_id
+    inline namespace methods
     {
         template <method_name MethodName, function_type FunctionType>
         struct method_signature
@@ -407,18 +381,11 @@ namespace traits
         using viable_overloads_t = typename viable_overloads<MethodName, make_overload_set<sizeof...(Methods)>, 0, Methods...>::type;
     }
 
-
-
-
-
-    inline namespace // behavior_implementation
+    inline namespace implementations
     {
-        namespace implementations
+        constexpr auto get (...) -> structural_tuple<>        
         {
-            constexpr auto get (...) -> structural_tuple<>        
-            {
-                return {};
-            }
+            return {};
         }
 
         template <method_id Method, callable Callable>
@@ -467,11 +434,7 @@ namespace traits
         }
     }
 
-
-
-
-
-    inline namespace // constraint
+    inline namespace constraints
     {
         template <typename T>
         concept constraint = requires(T t)
@@ -512,11 +475,7 @@ namespace traits
         }
     }
 
-
-
-
-
-    inline namespace // behavior
+    inline namespace behaviors
     {
         namespace behavior_detail
         {
@@ -667,11 +626,7 @@ namespace traits
         concept has_behavior = has_default_implementation<Behavior>::value or has_intrinsic_behavior<T, Behavior>::value or is_behavior_defined_for<Behavior, T>::value;
     }
 
-
-
-
-
-    inline namespace // trait
+    inline namespace the_trait
     {
         template <constraint Constraint, behavior... Behaviors>
         struct trait : structural_tuple<Behaviors...>
@@ -775,11 +730,7 @@ namespace traits
         concept is = has_trait<T, Trait>;
     }
 
-
-
-
-
-    inline namespace // impl
+    inline namespace // the_impl
     {
         template <behavior_implementation... Implementations>
         struct impl : structural_tuple<Implementations...>
@@ -840,11 +791,7 @@ namespace traits
         using impl_for = implementation_for<decltype (Trait), T>;
     }
 
-
-
-
-
-    inline namespace // trait_reference
+    inline namespace the_trait_reference
     {
         namespace trait_reference_detail
         {
@@ -917,11 +864,7 @@ namespace traits
         }
     }
 
-
-
-
-
-    inline namespace // Method<...>
+    inline namespace methods
     {
         template <auto MethodName>
         concept method_name_was_registered = false;
@@ -959,10 +902,6 @@ namespace traits
         }
     }
 }
-
-
-
-
 
 #define traits_method_adder_lambda_(name, lambda_name, using_name, const_suffix) \
     constexpr auto lambda_name = [] <function_type S, typename Type, typename InvokeMethod> () \
@@ -1028,7 +967,6 @@ namespace traits
 #define TRAITS_METHOD_DECLARATION(name) \
 template <::traits::function_type FunctionType> constexpr auto ::traits::Method<#name, FunctionType> = TRAITS_METHOD(name, FunctionType)
 
-// FIXME: declare all supported operator method names
 TRAITS_METHOD_DECLARATION(operator());
 
 
