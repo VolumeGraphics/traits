@@ -137,7 +137,8 @@ constexpr auto WithAuthor = trait
 Every method is uniquely identified by its signature, which consists of a name and a function type.
 
 > [!IMPORTANT]  
-> `Method<>` refers to a predefined variable template. To be able to use this syntax, you must first declare the method name in the global namespace with the help of a macro.
+> `Method<>` refers to a predefined variable template.
+> To be able to use this syntax, you must first declare the exact same method name in the global namespace with the help of a macro.
 
 ```c++
 TRAITS_METHOD_DECLARATION(author);
@@ -191,15 +192,15 @@ decltype (auto) operator<< (std::ostream& stream, is<Drawable> auto const& drawa
     drawable.draw (stream);
     return stream;
 }
+
+auto drawCircle ()
+{
+    std::cout << Circle{3.0};
+}
 ```
 
 > [!NOTE]  
 > `is<'trait'>` denotes a C++ concept
-
-And thus this code will behave as expected :
-```c++
-std::cout << Circle{3.0};
-```
 
 ### traits can have multiple behaviors
 
