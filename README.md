@@ -11,14 +11,14 @@ This library is inspired by [Rust Traits](https://doc.rust-lang.org/book/ch10-02
 
 ## Quick Start
 
-*traits* is a header-only C++20 library. To use the library, make sure your compiler meets the [minimum requirements](#compiler-req) and just include the header file [traits.h](https://github.com/VolumeGraphics/traits/blob/main/traits.h) in your source code.
-Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/jGoM3jeob).
+*traits* is a single header C++20 library. To use the library, make sure your compiler meets the [minimum requirements](#compiler-req) and just include the header file [traits.h](https://github.com/VolumeGraphics/traits/blob/main/include/traits.h) in your source code.
+Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/TW8z9coaP).
 
 CMake projects might fetch content this library:
 
 ```cmake
-FetchContent_Declare(traits_library GIT_REPOSITORY https://github.com/VolumeGraphics/traits.git)
-FetchContent_MakeAvailable(traits_library)
+FetchContent_Declare(traits_content GIT_REPOSITORY https://github.com/VolumeGraphics/traits.git)
+FetchContent_MakeAvailable(traits_content)
 ```
 
 There are currently no plans to support [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/overview) or [conan](https://conan.io/), as I do not recommend using the library in a productive environment ([see below](#motivation)).
@@ -146,12 +146,12 @@ Every method is uniquely identified by its signature, which consists of a name a
 > [!IMPORTANT]  
 > `Method<>` refers to a predefined variable template.
 > To be able to use this syntax, you must first declare the exact same method name in the global namespace with the help of a macro.
+>
+> ```c++
+> TRAITS_METHOD_DECLARATION(author);
+> ```
 
-```c++
-TRAITS_METHOD_DECLARATION(author);
-```
-
-There is an alternative syntax for defining traits without first declaring the method names.
+There is an alternative syntax for defining traits without first declaring the method name.
 
 ```c++
 constexpr auto WithSummary = trait
@@ -328,7 +328,7 @@ A constraint is a templated callable: `<typename> () -> bool`
 constexpr auto DefaultConstructible = [] <typename T> () { return std::is_default_constructible_v<T>; };
 ```
 
-This supports a range of use cases.
+A number of use cases are supported by constraints.
 
 #### constraints can check arbitrary type properties
 
@@ -853,9 +853,11 @@ For this reason, a noun is used in all examples or the paraphrase *with ... beha
 
 ## Implementation notes
 
+The implementation uses snake case for all concepts, types and type aliases. CamelCase is used for all global variables.
+
 The current implementation defines the following C++ concepts:
 - `function_type`: a function signature
-- `callable`: every valid `std::function` target
+- `callable`: a valid `std::function` target
 
 ## Open issues
 
