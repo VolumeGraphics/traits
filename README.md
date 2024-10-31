@@ -11,14 +11,14 @@ This library is inspired by [Rust Traits](https://doc.rust-lang.org/book/ch10-02
 
 ## Quick Start
 
-*traits* is a header-only C++20 library. To use the library, make sure your compiler meets the [minimum requirements](#compiler-req) and just include the header file [traits.h](https://github.com/VolumeGraphics/traits/blob/main/traits.h) in your source code.
+*traits* is a header-only C++20 library. To use the library, make sure your compiler meets the [minimum requirements](#compiler-req) and just include the header file [traits.h](https://github.com/VolumeGraphics/traits/blob/main/include/traits.h) in your source code.
 Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/jGoM3jeob).
 
 CMake projects might fetch content this library:
 
 ```cmake
-FetchContent_Declare(traits_library GIT_REPOSITORY https://github.com/VolumeGraphics/traits.git)
-FetchContent_MakeAvailable(traits_library)
+FetchContent_Declare(traits_content GIT_REPOSITORY https://github.com/VolumeGraphics/traits.git)
+FetchContent_MakeAvailable(traits_content)
 ```
 
 There are currently no plans to support [vcpkg](https://learn.microsoft.com/en-us/vcpkg/get_started/overview) or [conan](https://conan.io/), as I do not recommend using the library in a productive environment ([see below](#motivation)).
@@ -855,7 +855,7 @@ For this reason, a noun is used in all examples or the paraphrase *with ... beha
 
 The current implementation defines the following C++ concepts:
 - `function_type`: a function signature
-- `callable`: every valid `std::function` target
+- `callable`: a valid `std::function` target
 
 ## Open issues
 
