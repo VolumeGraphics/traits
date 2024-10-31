@@ -311,7 +311,9 @@ void print (std::ostream& out, is<WithAuthor + WithSummary> auto const& article)
 constexpr auto WithAuthorAndSummary = WithAuthor and WithSummary; // declare trait for later reuse
 ```
 
-### traits support an optional type constraint (first parameter)
+### traits support additional type constraints
+
+In contrast to rust, these traits support an optional constraint at the beginning of the parameter list.
 
 A constraint is a templated callable: `<typename> () -> bool`
 
@@ -319,7 +321,11 @@ A constraint is a templated callable: `<typename> () -> bool`
 constexpr auto DefaultConstructible = [] <typename T> () { return std::is_default_constructible_v<T>; };
 ```
 
-Constraints can be used to check arbitrary type properties.
+This supports a range of use cases.
+
+#### constraints can check arbitrary type properties
+
+Sometimes you want to ensure not only the behaviors of a type, but also other characteristics.
 
 ```c++
 constexpr auto Empty = [] <typename T> () { return std::is_empty_v<T>; };
@@ -832,6 +838,11 @@ auto printName ()
     printType (Square{2.0});
 }
 ```
+
+## Tips for use
+
+Since traits are essentially used within `is<...>`, the trait names should be chosen appropriately to maintain a natural reading flow.
+For this reason, a noun is used in all examples or the paraphrase *with ... behavior* instead of *has ... behavior* is used.
 
 ## Implementation notes
 
