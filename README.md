@@ -12,11 +12,13 @@ This library is inspired by [Rust Traits](https://doc.rust-lang.org/book/ch10-02
 ## Quick Start
 
 *traits* is a single header C++20 library. To use the library, make sure your compiler meets the [minimum requirements](#compiler-req) and just include the header file [traits.h](https://github.com/VolumeGraphics/traits/blob/main/include/traits.h) in your source code.
-Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/TW8z9coaP).
+Alternatively, you can first try it out in [Compiler Explorer](https://godbolt.org/z/TW8z9coaP).
 
 CMake projects might fetch content this library:
 
 ```cmake
+include(FetchContent)
+
 FetchContent_Declare(traits_content GIT_REPOSITORY https://github.com/VolumeGraphics/traits.git)
 FetchContent_MakeAvailable(traits_content)
 ```
@@ -773,9 +775,27 @@ auto fooBar ()
 ## Using the library ... advanced concepts
 
 ### precise control of the memory requirements
+
 `some<>` offers the following customization options:
 - small buffer optimization
 - inlined methods
+
+### unerasing some types
+
+If you ever need to unerase the type stored within a `some<>`, you can ask with `.type()` for the `std::type_info` and try a `some_cast<Type>` which behaves exactly like a `std::any_cast<Type>`.
+
+```c++
+auto checkSomeCast ()
+{
+    auto action = some<Action> {ForeignAction{}};
+
+    auto foreignActionPtr = some_cast<ForeignAction> (&action);
+    assert (foreignActionPtr != nullptr);
+
+    foreignActionPtr->ready = true;
+    return foreignActionPtr->execute ();
+}
+```
 
 ### explicit support for variant types
 
@@ -784,7 +804,7 @@ For a number of reasons, it makes sense to explicitly support `some<>` variant t
 - if you want to implement the variant behaviors separately for each type
 - if you require a different memory model for your variant type
 
-`some_variant<'Types'...>` is a type alias for a specially constrained `some<>` type that can be used as a replacement for `std::variant`.
+`some_variant<'Types'...>` is a type alias for a specially constrained `some<>` that can be used as a replacement for `std::variant`.
 `some<>` provides a `visit()` overload for this purpose:
 
 ```c++
