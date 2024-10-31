@@ -11,8 +11,8 @@ This library is inspired by [Rust Traits](https://doc.rust-lang.org/book/ch10-02
 
 ## Quick Start
 
-*traits* is a header-only C++20 library. To use the library, make sure your compiler meets the [minimum requirements](#compiler-req) and just include the header file [traits.h](https://github.com/VolumeGraphics/traits/blob/main/include/traits.h) in your source code.
-Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/jGoM3jeob).
+*traits* is a single header C++20 library. To use the library, make sure your compiler meets the [minimum requirements](#compiler-req) and just include the header file [traits.h](https://github.com/VolumeGraphics/traits/blob/main/include/traits.h) in your source code.
+Alternatively, you can try it out in [Compiler Explorer](https://godbolt.org/z/TW8z9coaP).
 
 CMake projects might fetch content this library:
 
