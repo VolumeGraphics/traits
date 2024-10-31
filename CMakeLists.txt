@@ -9,16 +9,10 @@ target_include_directories(traits INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_S
 
 if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
  
-#    option(TRAITS_BUILD_EXAMPLES "whether or not examples should be built" ON)
-#    option(TRAITS_BUILD_TESTS    "whether or not tests should be built" ON)
+    add_custom_target(check COMMENT "Build and run all the tests and examples.")
 
-#    if(TRAITS_BUILD_EXAMPLES)
-#        add_subdirectory(example)
-#    endif()
-
-#    if(TRAITS_BUILD_TESTS)
-#        enable_testing()
-#        add_subdirectory(tests)
-#    endif()
+    enable_testing()
+    add_subdirectory(example)
+#    add_subdirectory(test)
 
 endif()

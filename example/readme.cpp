@@ -1,15 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
 #include <algorithm>
 #include <any>
 #include <array>
@@ -28,6 +16,7 @@
 #include <typeinfo>
 #include <utility>
 
+#include "traits.h"
 using namespace traits;
 
 #ifdef __clang__
