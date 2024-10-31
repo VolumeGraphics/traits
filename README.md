@@ -146,12 +146,12 @@ Every method is uniquely identified by its signature, which consists of a name a
 > [!IMPORTANT]  
 > `Method<>` refers to a predefined variable template.
 > To be able to use this syntax, you must first declare the exact same method name in the global namespace with the help of a macro.
+>
+> ```c++
+> TRAITS_METHOD_DECLARATION(author);
+> ```
 
-```c++
-TRAITS_METHOD_DECLARATION(author);
-```
-
-There is an alternative syntax for defining traits without first declaring the method names.
+There is an alternative syntax for defining traits without first declaring the method name.
 
 ```c++
 constexpr auto WithSummary = trait
@@ -328,7 +328,7 @@ A constraint is a templated callable: `<typename> () -> bool`
 constexpr auto DefaultConstructible = [] <typename T> () { return std::is_default_constructible_v<T>; };
 ```
 
-This supports a range of use cases.
+A number of use cases are supported by constraints.
 
 #### constraints can check arbitrary type properties
 
@@ -852,6 +852,8 @@ Since traits are essentially used within `is<...>`, the trait names should be ch
 For this reason, a noun is used in all examples or the paraphrase *with ... behavior* instead of *has ... behavior* is used.
 
 ## Implementation notes
+
+The implementation uses snake case for all concepts, types and type aliases. CamelCase is used for all global variables.
 
 The current implementation defines the following C++ concepts:
 - `function_type`: a function signature
