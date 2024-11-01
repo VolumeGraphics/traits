@@ -805,6 +805,7 @@ For a number of reasons, it makes sense to explicitly support `some<>` variant t
 - if you require a different memory model for your variant type
 
 `some_variant<'Types'...>` is a type alias for a specially constrained `some<>` that can be used as a replacement for `std::variant`.
+
 `some<>` provides a `visit()` overload for this purpose:
 
 ```c++
@@ -834,7 +835,7 @@ auto printCircumferenceOfShapes ()
 The size of a `some_variant<>` is large enough to store all alternatives inplace.
 
 However, you can also define `some_variant<>`s with additional constraints and behaviors or customized storage.
-`some<>` offers a special type alias template for this purpose:
+`some<>` offers a special type alias template `variant` for this purpose:
 
 ```c++
 constexpr auto WithType = trait
@@ -878,6 +879,16 @@ The implementation uses snake case for all concepts, types and type aliases. Cam
 The current implementation defines the following C++ concepts:
 - `function_type`: a function signature
 - `callable`: a valid `std::function` target
+- `method_id`: a unique identifier for a method
+- `constraint`: a test for any type attributes
+- `behavior`: a certain behavior
+- `behavior_implementation`: an implementation of a behavior
+- `is`: a type supports a specific trait
+
+The following types are used in the implementation:
+- `method_name`: unique name of a method
+- `method_signature<method_name, function_type>` is the only implementation of the `method_id` concept
+- `method_implementation<method_id, callable>` is the only implementation of the `behavior_implementation` concept
 
 ## Open issues
 
