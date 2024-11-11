@@ -229,8 +229,8 @@ auto drawCircle ()
 }
 ```
 
-> [!NOTE]  
-> `is<'trait'>` denotes a C++ concept
+`is<'trait'>` is a C++ concept provided by the library that checks the type without `const` or `volatile` modifiers and as a non-reference type (i.e. the result of `std::remove_cvref_t`).
+This makes it easier to use this concept for forwarding references.
 
 ### traits can have multiple behaviors
 
@@ -397,7 +397,7 @@ struct Any final
 };
 
 template <typename T, typename U>
-concept not_same_as = not std::same_as<T, U>;
+concept not_same_as = not std::same_as<std::remove_cvref_t<T>, U>; // sic! T might be deduced to a reference type
 ```
 
 On the other hand, with a constraint ...
@@ -418,6 +418,8 @@ struct Any
 
 > [!NOTE]  
 > `is<'constraint'>` is equivalent to `is<trait{'constraint'}>`
+
+This check will work even when value will be deduced as reference type.
 
 #### constraints can be used to force strong(er) coupling
 
@@ -678,7 +680,7 @@ constexpr auto get (impl_for<WithSummary, Tweet>)
 }
 ```
 
-> [!NOTE]  
+> [!TIP]  
 > The short syntax also works for multiple methods and lambda implementations.
 
 We can now use the type in a function that requires both traits.
@@ -902,7 +904,7 @@ auto printName ()
 ## Tips for use
 
 Since traits are essentially used within `is<...>`, the trait names should be chosen appropriately to maintain a natural reading flow.
-For this reason, a noun is used in all examples or the paraphrase *with ... behavior* instead of *has ... behavior* is used.
+For this reason, a noun or the paraphrase *with ... behavior* instead of *has ... behavior* is used in all examples .
 
 ## Implementation notes
 
