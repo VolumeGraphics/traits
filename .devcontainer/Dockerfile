@@ -5,6 +5,6 @@ RUN apt-get update && apt-get install -y \
     python python3.8-venv pip pipx \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install clang-format pre-commit
+RUN pip install clang-format && pip install pre-commit
 
 RUN pre-commit install
