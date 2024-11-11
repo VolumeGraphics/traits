@@ -17,7 +17,7 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -25,10 +25,15 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
+      - name: Get devcontainer image name
+        run: |
+          image="ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-devcontainer"
+          echo "IMAGE_NAME=${image,,}" >> $GITHUB_ENV
+        
       - name: Run command in devcontainer
         uses: devcontainers/ci@v0.3
         with:
-          imageName: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-devcontainer
-          cacheFrom: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-devcontainer
+          imageName: ${{ env.IMAGE_NAME }}
+          cacheFrom: ${{ env.IMAGE_NAME }}
           push: always
           runCmd: ${{ inputs.run_cmd }}
