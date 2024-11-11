@@ -1,19 +1,13 @@
 name: lint
 
-on:
-  push:
-    branches: [ "main" ]
+on: # rebuild any PRs and main branch changes
   pull_request:
-    branches: [ "main" ]
+  push:
+    branches:
+      - main
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Check formatting
-      run: |
-        find examples include tests -name '*.cpp' -o -name '*.h' |
-        xargs clang-format -style=file -i # --dry-run --Werror
+    uses: ./.github/workflows/devcontainer-command.yml
+    with:
+      run_cmd: pre-commit run --all-files --show-diff-on-failure

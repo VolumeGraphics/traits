@@ -1,0 +1,34 @@
+name: devcontainer command
+
+on:
+  workflow_call:
+    inputs:
+      run_cmd:
+        required: true
+        type: string
+        description: 'Command to run in the dev container'
+
+jobs:
+  devcontainer-command:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Run command in devcontainer
+        uses: devcontainers/ci@v0.3
+        with:
+          imageName: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-devcontainer
+          cacheFrom: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-devcontainer
+          push: always
+          runCmd: ${{ inputs.run_cmd }}
