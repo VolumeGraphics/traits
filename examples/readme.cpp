@@ -609,7 +609,7 @@ class RegionGrowerIF {
     }
 
     bool addGeoConstraint(GeoConstraintIF* constraint) {
-        if (!constraint) {
+        if (! constraint) {
             return false;
         }
 

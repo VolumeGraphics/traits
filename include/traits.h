@@ -1163,8 +1163,8 @@ struct variant_constraint {
 
     template <typename T>
     constexpr auto operator()() const noexcept {
-        return (... or std::same_as<T, Alternatives>)and OtherConstraints{}
-            .template operator()<T>();
+        return (... or std::same_as<T, Alternatives>) and
+               OtherConstraints{}.template operator()<T>();
     }
 };
 
