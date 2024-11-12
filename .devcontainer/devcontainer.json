@@ -21,12 +21,14 @@
             "extensions": [
                 "ms-vscode.cpptools",
                 "ms-vscode.cmake-tools",
+				"ms-vscode.cpptools-extension-pack",
+				"ms-vscode.cpptools-themes",
+				"ms-azuretools.vscode-docker",
 				"elagil.pre-commit-helper",
 				"github.copilot",
 				"github.copilot-chat",
 				"github.vscode-pull-request-github",
 				"marklarah.pre-commit-vscode",
-				"ms-azuretools.vscode-docker",
 				"twxs.cmake"
 			]
         }
