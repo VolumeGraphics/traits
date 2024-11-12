@@ -7,12 +7,8 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install clang-format pre-commit
 
-WORKDIR /temp-repo
+COPY docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
 
-COPY .pre-commit-config.yaml .
-
-RUN git init . && pre-commit install --install-hooks
-
-WORKDIR /
-
-RUN rm -rf temp-repo
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
+CMD [ "sleep", "infinity" ]
