@@ -7,7 +7,12 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install clang-format pre-commit
 
-COPY . /home/traits
-WORKDIR /home/traits
+WORKDIR /temp-repo
 
-RUN pre-commit install
+COPY .pre-commit-config.yaml .
+
+RUN git init . && pre-commit install --install-hooks
+
+WORKDIR /
+
+RUN rm -rf temp-repo
