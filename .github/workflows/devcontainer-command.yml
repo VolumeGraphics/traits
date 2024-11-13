@@ -36,4 +36,4 @@ jobs:
           imageName: ${{ env.IMAGE_NAME }}
           cacheFrom: ${{ env.IMAGE_NAME }}
           push: always
-          runCmd: /post-start.sh && ${{ inputs.run_cmd }}
+          runCmd: ${{ inputs.run_cmd }}
