@@ -12,21 +12,15 @@ target_sources(traits INTERFACE
   FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/traits.h"
   )
 
+# only proceed if we are building the library directly
+
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     return()
 endif()
 
 option(TRAITS_BUILD_EXAMPLES "whether or not examples should be built" ON)
 option(TRAITS_BUILD_TESTS "whether or not tests should be built" ON)
-
-if(TRAITS_BUILD_EXAMPLES)
-    add_subdirectory(examples)
-endif()
-
-if(TRAITS_BUILD_TESTS)
-    enable_testing()
-    add_subdirectory(tests)
-endif()
+set(TRAITS_PACKAGE_NAME "${PROJECT_NAME}.zip" CACHE FILEPATH "name of package file")
 
 # installation rules
 
@@ -39,15 +33,27 @@ install(FILES "cmake/traits-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/traits-co
 
 # downloadable package for fetch content
 
-set (package_name "${PROJECT_NAME}.zip")
 add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${package_name}"
-    COMMAND ${CMAKE_COMMAND} -E tar c "${CMAKE_CURRENT_BINARY_DIR}/${package_name}" --format=zip --
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}"
+    COMMAND ${CMAKE_COMMAND} -E tar c "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}" --format=zip --
     cmake/ examples/ include/ tests/ CMakeLists.txt LICENSE README.md
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/package_name"
-    COMMAND ${CMAKE_COMMAND} -E echo "name=${package_name}" > "${CMAKE_CURRENT_BINARY_DIR}/package_name"
+    COMMAND ${CMAKE_COMMAND} -E echo "name=${TRAITS_PACKAGE_NAME}" > "${CMAKE_CURRENT_BINARY_DIR}/package_name"
     )
-add_custom_target(package DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${package_name}" "${CMAKE_CURRENT_BINARY_DIR}/package_name")
+add_custom_target(package DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}" "${CMAKE_CURRENT_BINARY_DIR}/package_name")
+
+# optional examples
+
+if(TRAITS_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
+# optional tests
+
+if(TRAITS_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

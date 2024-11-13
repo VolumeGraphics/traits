@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(external CXX)
+project(deploy CXX)
 find_package(traits REQUIRED)
 
 add_executable(main main.cpp)
