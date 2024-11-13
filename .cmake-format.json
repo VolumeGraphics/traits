@@ -1,0 +1,6 @@
+{
+  "lint": {
+    "disabled_codes": ["C0113"],
+    "global_var_pattern": "^[A-Z][0-9A-Z_]+$|^gtest_force_shared_crt$"
+  }
+}
