@@ -36,4 +36,4 @@ jobs:
           imageName: ${{ env.IMAGE_NAME }}
           cacheFrom: ${{ env.IMAGE_NAME }}
           push: always
-          runCmd: pre-commit install --install-hooks && ${{ inputs.run_cmd }}
+          runCmd: /post-start.sh && ${{ inputs.run_cmd }}

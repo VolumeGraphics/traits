@@ -7,8 +7,5 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install clang-format pre-commit
 
-COPY docker-entrypoint.sh /
-RUN chmod +x /docker-entrypoint.sh
-
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
-CMD [ "sleep", "infinity" ]
+COPY post-start.sh /
+RUN chmod +x /post-start.sh
