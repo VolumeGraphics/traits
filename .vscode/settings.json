@@ -1,4 +1,0 @@
-{
-    "pre-commit-helper.runOnSave": "all hooks",
-    "pre-commit-helper.runOnSaveRegex": "^(.*)\\.(|cpp|h)$"
-}
