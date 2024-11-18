@@ -1,5 +1,6 @@
 # Traits for C++
 
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 [![windows](https://github.com/VolumeGraphics/traits/actions/workflows/windows.yml/badge.svg?cache-control=no-cache)](https://github.com/VolumeGraphics/traits/actions/workflows/windows.yml)
 [![linux](https://github.com/VolumeGraphics/traits/actions/workflows/linux.yml/badge.svg?cache-control=no-cache)](https://github.com/VolumeGraphics/traits/actions/workflows/linux.yml)
 [![macos](https://github.com/VolumeGraphics/traits/actions/workflows/macos.yml/badge.svg?cache-control=no-cache)](https://github.com/VolumeGraphics/traits/actions/workflows/macos.yml)
