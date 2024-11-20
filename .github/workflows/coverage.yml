@@ -17,6 +17,7 @@ jobs:
     - name: Check test coverage
       uses: ./.github/actions/devcontainer
       with:
+        token: ${{ secrets.GITHUB_TOKEN }}
         command: |
           cmake -E make_directory build
           cmake -B build -DCMAKE_BUILD_TYPE=Debug -DTRAITS_TEST_COVERAGE=On -S .
