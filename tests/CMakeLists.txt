@@ -75,10 +75,10 @@ if(TRAITS_TEST_COVERAGE)
 
   add_custom_target(
     coverage
-    COMMAND "${LCOV}" --capture --directory . --output-file coverage.info
-    COMMAND "${LCOV}" --remove coverage.info '/usr/*' '*/gtest/*' --output-file coverage.info
+    COMMAND "${LCOV}" --capture --directory . --exclude '/usr/*' --exclude 'gtest/*' --output-file
+            coverage.info
     COMMAND "${LCOV}" --list coverage.info
-    COMMAND "${GENHTML}" --demangle-cpp -o coverage coverage.info
-    COMMAND "${GCOVR}" --cobertura --output coverage.cobertura.xml
+    COMMAND "${GCOVR}" --cobertura --cobertura-pretty --exclude '/usr/*' --exclude 'gtest/*'
+            --output coverage.cobertura.xml
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 endif()

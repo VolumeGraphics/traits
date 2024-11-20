@@ -32,9 +32,9 @@ jobs:
         disable_search: true # optional (default = false)
         files: ./build/coverage.cobertura.xml # optional
         flags: unittests # optional
-        # name: codecov-umbrella # optional
         token: ${{ secrets.CODECOV_TOKEN }}
         verbose: true # optional (default = false)
+        plugins: noop
 
     - name: Create test coverage summary
       uses: irongut/CodeCoverageSummary@v1.3.0
