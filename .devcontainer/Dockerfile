@@ -9,7 +9,7 @@ RUN apt update && apt upgrade --yes
 
 RUN apt install --yes gcc-14 g++-14
 RUN apt install --yes clang-format pre-commit
-RUN apt install --yes gcovr lcov
+RUN apt install --yes lcov
 
 # Choose default gcc and g++ version
 

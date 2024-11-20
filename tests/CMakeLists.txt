@@ -68,17 +68,21 @@ add_test(NAME test.fetch COMMAND ${CMAKE_COMMAND} --build "${PROJECT_BINARY_DIR}
 
 if(TRAITS_TEST_COVERAGE)
   find_program(LCOV lcov REQUIRED)
-  find_program(GCOVR gcovr REQUIRED)
-  find_program(GENHTML genhtml REQUIRED)
+  find_program(PYTHON3 python3 REQUIRED)
 
   set(CMAKE_CXX_FLAGS "-O0 -coverage")
 
   add_custom_target(
     coverage
-    COMMAND "${LCOV}" --capture --directory . --exclude '/usr/*' --exclude 'gtest/*' --output-file
-            coverage.info
-    COMMAND "${LCOV}" --list coverage.info
-    COMMAND "${GCOVR}" --cobertura --cobertura-pretty --exclude '/usr/*' --exclude 'gtest/*'
-            --output coverage.cobertura.xml
+    COMMAND "${LCOV}" --capture --directory "${CMAKE_BINARY_DIR}" --exclude '/usr/*' --exclude
+            '/*/gtest/*' --output-file "${CMAKE_BINARY_DIR}/coverage.info"
+    COMMAND "${LCOV}" --list "${CMAKE_BINARY_DIR}/coverage.info"
+    COMMAND
+      wget -O "${CMAKE_BINARY_DIR}/lcov_cobertura.py"
+      https://raw.github.com/eriwen/lcov-to-cobertura-xml/master/lcov_cobertura/lcov_cobertura.py
+    COMMAND
+      "${PYTHON3}" "${CMAKE_BINARY_DIR}/lcov_cobertura.py" "${CMAKE_BINARY_DIR}/coverage.info"
+      --base-dir "${CMAKE_SOURCE_DIR}" --demangle --output
+      "${CMAKE_BINARY_DIR}/coverage.cobertura.xml"
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 endif()
