@@ -9,19 +9,19 @@ add_library(traits INTERFACE)
 add_library(Traits::traits ALIAS traits)
 
 target_compile_features(traits INTERFACE cxx_std_20)
-target_sources(
-  traits
-  INTERFACE FILE_SET HEADERS BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
-            FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/traits.h")
+target_sources(traits INTERFACE FILE_SET HEADERS BASE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/include"
+                                FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/traits.h")
 
 # only proceed if we are building the library directly
 
-if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+if(NOT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   return()
 endif()
 
 option(TRAITS_BUILD_EXAMPLES "whether or not examples should be built" ON)
 option(TRAITS_BUILD_TESTS "whether or not tests should be built" ON)
+option(TRAITS_TEST_COVERAGE "whether or not test coverage should be generated" OFF)
+
 set(TRAITS_PACKAGE_NAME
     "${PROJECT_NAME}.zip"
     CACHE FILEPATH "name of package file")
@@ -42,26 +42,22 @@ install(
   NAMESPACE Traits::
   FILE "traits-targets.cmake"
   DESTINATION "lib/cmake/traits-${PROJECT_VERSION}")
-install(FILES "cmake/traits-config.cmake"
-              "${CMAKE_CURRENT_BINARY_DIR}/traits-config-version.cmake"
+install(FILES "cmake/traits-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/traits-config-version.cmake"
         DESTINATION "lib/cmake/traits-${PROJECT_VERSION}")
 
 # downloadable package for fetch content
 
 add_custom_command(
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}"
-  COMMAND
-    ${CMAKE_COMMAND} -E tar c
-    "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}" --format=zip -- cmake/
-    examples/ include/ tests/ CMakeLists.txt LICENSE README.md
+  COMMAND ${CMAKE_COMMAND} -E tar c "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}"
+          --format=zip -- cmake/ examples/ include/ tests/ CMakeLists.txt LICENSE README.md
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 add_custom_command(
   OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/package_name"
   COMMAND ${CMAKE_COMMAND} -E echo "name=${TRAITS_PACKAGE_NAME}" >
           "${CMAKE_CURRENT_BINARY_DIR}/package_name")
-add_custom_target(
-  package DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}"
-                  "${CMAKE_CURRENT_BINARY_DIR}/package_name")
+add_custom_target(package DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}"
+                                  "${CMAKE_CURRENT_BINARY_DIR}/package_name")
 
 # optional examples
 
