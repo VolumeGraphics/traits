@@ -1,16 +1,28 @@
-ARG VARIANT=ubuntu-20.04
-ARG CMAKE_VERSION=3.30.5
+# FROM ubuntu:24.04
+FROM mcr.microsoft.com/devcontainers/cpp:ubuntu-24.04
 
-FROM mcr.microsoft.com/vscode/devcontainers/cpp:0-${VARIANT}
+# Update and upgrade packages
 
-RUN apt-get update && apt-get install --yes \
-    lcov python python3.8-venv pip pipx \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt update && apt upgrade --yes
 
-RUN pip install clang-format pre-commit
+# Install additional packages
 
-COPY ./reinstall-cmake.sh /tmp/
-RUN chmod +x /tmp/reinstall-cmake.sh && /tmp/reinstall-cmake.sh ${CMAKE_VERSION} && rm -f /tmp/reinstall-cmake.sh
+RUN apt install --yes gcc-14 g++-14
+RUN apt install --yes clang-format pre-commit
+RUN apt install --yes lcov
+
+# Choose default gcc and g++ version
+
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 13 \
+    && update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 14
+
+RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 13 \
+    && update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14
+
+RUN update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-13 13 \
+    && update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-14 14
+
+# Post-start script
 
 COPY post-start.sh /
 RUN chmod +x /post-start.sh
