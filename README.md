@@ -1,10 +1,12 @@
 # Traits for C++
 
-[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 [![windows](https://github.com/VolumeGraphics/traits/actions/workflows/windows.yml/badge.svg?cache-control=no-cache)](https://github.com/VolumeGraphics/traits/actions/workflows/windows.yml)
 [![linux](https://github.com/VolumeGraphics/traits/actions/workflows/linux.yml/badge.svg?cache-control=no-cache)](https://github.com/VolumeGraphics/traits/actions/workflows/linux.yml)
 [![macos](https://github.com/VolumeGraphics/traits/actions/workflows/macos.yml/badge.svg?cache-control=no-cache)](https://github.com/VolumeGraphics/traits/actions/workflows/macos.yml)
 [![lint](https://github.com/VolumeGraphics/traits/actions/workflows/lint.yml/badge.svg?cache-control=no-cache)](https://github.com/VolumeGraphics/traits/actions/workflows/lint.yml)
+[![codecov](https://codecov.io/github/VolumeGraphics/traits/graph/badge.svg?token=BK2TDD58X6)](https://codecov.io/github/VolumeGraphics/traits)
+
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](LICENSE)
 
 Define shared behavior in a non-intrusive way while preserving value semantics.
 
