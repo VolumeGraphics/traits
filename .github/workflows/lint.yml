@@ -8,6 +8,15 @@ on: # rebuild any PRs and main branch changes
 
 jobs:
   lint:
-    uses: ./.github/workflows/devcontainer-command.yml
-    with:
-      run_cmd: pre-commit run --all-files --show-diff-on-failure
+    runs-on: 'ubuntu-24.04'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Check pre-commit hooks
+      uses: ./.github/actions/devcontainer
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        command: >
+          pre-commit run --all-files --show-diff-on-failure
