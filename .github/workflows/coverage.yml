@@ -8,12 +8,22 @@ on: # rebuild any PRs and main branch changes
 
 jobs:
   coverage:
-    uses: ./.github/workflows/devcontainer-command.yml
-    with:
-      run_cmd: |
-        cmake -E make_directory build
-        cmake -B build -DCMAKE_BUILD_TYPE=Debug -DTRAITS_TEST_COVERAGE=On -S .
-        cmake --build build --config Debug --target all
-        cmake --build build --config Debug --target test
-        cmake --build build --config Debug --target coverage
+    runs-on: 'ubuntu-24.04'
+
+    steps:
+    - name: Check test coverage
+      uses: ./.github/actions/devcontainer
+      with:
+        command: |
+          cmake -E make_directory build
+          cmake -B build -DCMAKE_BUILD_TYPE=Debug -DTRAITS_TEST_COVERAGE=On -S .
+          cmake --build build --config Debug --target all
+          cmake --build build --config Debug --target test
+          cmake --build build --config Debug --target coverage
+
+    - name: Create test coverage report
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      with:
+        filename: coverage.cobertura.xml
+        badge: true
 

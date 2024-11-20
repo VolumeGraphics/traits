@@ -68,6 +68,7 @@ add_test(NAME test.fetch COMMAND ${CMAKE_COMMAND} --build "${PROJECT_BINARY_DIR}
 
 if(TRAITS_TEST_COVERAGE)
   find_program(LCOV lcov REQUIRED)
+  find_program(GCOVR gcovr REQUIRED)
   find_program(GENHTML genhtml REQUIRED)
 
   set(CMAKE_CXX_FLAGS "-O0 -coverage")
@@ -78,5 +79,6 @@ if(TRAITS_TEST_COVERAGE)
     COMMAND "${LCOV}" --remove coverage.info '/usr/*' '*/gtest/*' --output-file coverage.info
     COMMAND "${LCOV}" --list coverage.info
     COMMAND "${GENHTML}" --demangle-cpp -o coverage coverage.info
+    COMMAND "${GCOVR}" --cobertura --output coverage.cobertura.xml
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 endif()
