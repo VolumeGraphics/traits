@@ -5,10 +5,10 @@ inputs:
     description: 'Command to run in the devcontainer'
     required: true
     type: string
-  devcontainer-path:
-    description: 'Path to devcontainer config'
-    required: false
-    default: '.devcontainer'
+  token:
+    description: 'GitHub token'
+    required: true
+    type: string
 
 runs:
   using: 'composite'
@@ -21,9 +21,10 @@ runs:
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ inputs.token }}
       
     - name: Get devcontainer image name
+      shell: bash
       run: |
         image="ghcr.io/${{ github.repository }}-devcontainer"
         echo "IMAGE_NAME=${image,,}" >> $GITHUB_ENV
@@ -34,5 +35,4 @@ runs:
         imageName: ${{ env.IMAGE_NAME }}
         cacheFrom: ${{ env.IMAGE_NAME }}
         push: always
-        devcontainerPath: ${{ inputs.devcontainer-path }}
         runCmd: ${{ inputs.command }}

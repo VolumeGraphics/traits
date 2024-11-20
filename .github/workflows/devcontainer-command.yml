@@ -19,3 +19,4 @@ jobs:
       - uses: VolumeGraphics/traits/.github/actions/devcontainer@main
         with:
           command: ${{ inputs.run_cmd }}
+          token: ${{ secrets.GITHUB_TOKEN }}
