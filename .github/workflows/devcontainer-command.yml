@@ -16,24 +16,6 @@ jobs:
       packages: write
     
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+      - uses: ${{ github.repository_owner }}/${{ github.event.repository.name }}/.github/actions/devcontainer@main
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Get devcontainer image name
-        run: |
-          image="ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-devcontainer"
-          echo "IMAGE_NAME=${image,,}" >> $GITHUB_ENV
-        
-      - name: Run command in devcontainer
-        uses: devcontainers/ci@v0.3
-        with:
-          imageName: ${{ env.IMAGE_NAME }}
-          cacheFrom: ${{ env.IMAGE_NAME }}
-          push: always
-          runCmd: ${{ inputs.run_cmd }}
+          command: ${{ inputs.run_cmd }}

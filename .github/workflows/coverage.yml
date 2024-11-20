@@ -16,3 +16,4 @@ jobs:
         cmake --build build --config Debug --target all
         cmake --build build --config Debug --target test
         cmake --build build --config Debug --target coverage
+

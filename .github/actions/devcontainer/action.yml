@@ -1,0 +1,38 @@
+name: 'Devcontainer CI Action'
+description: 'Run commands in devcontainer'
+inputs:
+  command:
+    description: 'Command to run in the devcontainer'
+    required: true
+    type: string
+  devcontainer-path:
+    description: 'Path to devcontainer config'
+    required: false
+    default: '.devcontainer'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      
+    - name: Get devcontainer image name
+      run: |
+        image="ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}-devcontainer"
+        echo "IMAGE_NAME=${image,,}" >> $GITHUB_ENV
+        
+    - name: Run command in devcontainer
+      uses: devcontainers/ci@v0.3
+      with:
+        imageName: ${{ env.IMAGE_NAME }}
+        cacheFrom: ${{ env.IMAGE_NAME }}
+        push: always
+        devcontainerPath: ${{ inputs.devcontainer-path }}
+        runCmd: ${{ inputs.command }}
