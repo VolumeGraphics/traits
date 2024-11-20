@@ -11,8 +11,8 @@ jobs:
     uses: ./.github/workflows/devcontainer-command.yml
     with:
       run_cmd: |
-        cmake -E make_directory ${{github.workspace}}/build
-        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Debug -DTRAITS_TEST_COVERAGE=On -S ${{github.workspace}}
-        cmake --build ${{github.workspace}}/build --config Debug --target all
-        cmake --build ${{github.workspace}}/build --config Debug --target test
-        cmake --build ${{github.workspace}}/build --config Debug --target coverage
+        cmake -E make_directory build
+        cmake -B build -DCMAKE_BUILD_TYPE=Debug -DTRAITS_TEST_COVERAGE=On -S .
+        cmake --build build --config Debug --target all
+        cmake --build build --config Debug --target test
+        cmake --build build --config Debug --target coverage
