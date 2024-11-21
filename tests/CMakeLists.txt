@@ -20,8 +20,9 @@ foreach(test IN LISTS tests)
   gtest_discover_tests(${test})
 endforeach()
 
-# Add the deployment test, which checks that we can indeed install traits and then use
+# Add the deployment test target, which checks that we can indeed install traits and then use
 # `find_package` to depend on it from another CMake project.
+
 include(ExternalProject)
 set(FAKE_INSTALL_DIR "${PROJECT_BINARY_DIR}/fakeroot")
 ExternalProject_Add(
@@ -47,10 +48,9 @@ add_custom_target(
     -DCMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}\;${FAKE_INSTALL_DIR}"
     -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE}
   COMMAND ${CMAKE_COMMAND} --build "${CMAKE_CURRENT_BINARY_DIR}/deploy")
-add_test(NAME test.deploy COMMAND ${CMAKE_COMMAND} --build "${PROJECT_BINARY_DIR}" --target
-                                  test.deploy)
 
-# Add the fetch test, which checks that we can indeed use fetch content from another CMake project.
+# Add the fetch test target, which checks that we can indeed use fetch content to depend on traits
+# from another CMake project.
 
 add_custom_target(
   test.fetch
@@ -63,8 +63,8 @@ add_custom_target(
     -DCMAKE_CXX_COMPILER="${CMAKE_CXX_COMPILER}" -DCMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}"
     -DCMAKE_TOOLCHAIN_FILE="${CMAKE_TOOLCHAIN_FILE}"
   COMMAND ${CMAKE_COMMAND} --build "${CMAKE_CURRENT_BINARY_DIR}/fetch")
-add_test(NAME test.fetch COMMAND ${CMAKE_COMMAND} --build "${PROJECT_BINARY_DIR}" --target
-                                 test.fetch)
+
+# Add the coverage target, which generates a coverage report
 
 if(TRAITS_TEST_COVERAGE)
   find_program(LCOV lcov REQUIRED)
