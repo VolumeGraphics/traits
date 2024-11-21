@@ -21,9 +21,7 @@ jobs:
         command: |
           cmake -E make_directory build
           cmake -B build -DCMAKE_BUILD_TYPE=Debug -DTRAITS_TEST_COVERAGE=On -S .
-          cmake --build build --config Debug --target all
-          cmake --build build --config Debug --target test
-          cmake --build build --config Debug --target coverage
+          cmake --build build --config Debug --target all test coverage
 
     - name: Upload test coverage report to Codecov
       uses: codecov/codecov-action@v4
