@@ -1,6 +1,7 @@
 name: deploy package
 permissions:
   contents: write
+  packages: write
 
 on:
   release:
