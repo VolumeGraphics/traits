@@ -22,10 +22,6 @@ option(TRAITS_BUILD_EXAMPLES "whether or not examples should be built" ON)
 option(TRAITS_BUILD_TESTS "whether or not tests should be built" ON)
 option(TRAITS_TEST_COVERAGE "whether or not test coverage should be generated" OFF)
 
-set(TRAITS_PACKAGE_NAME
-    "${PROJECT_NAME}.zip"
-    CACHE FILEPATH "name of package file")
-
 # installation rules
 
 configure_file("cmake/traits-config-version.cmake.in"
@@ -47,17 +43,14 @@ install(FILES "cmake/traits-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/traits-co
 
 # downloadable package for fetch content
 
+set(PACKAGE_NAME "traits.zip")
+
 add_custom_command(
-  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}"
-  COMMAND ${CMAKE_COMMAND} -E tar c "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}"
-          --format=zip -- cmake/ examples/ include/ tests/ CMakeLists.txt LICENSE README.md
+  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}"
+  COMMAND ${CMAKE_COMMAND} -E tar c "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}" --format=zip --
+          cmake/ examples/ include/ tests/ CMakeLists.txt LICENSE README.md
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-add_custom_command(
-  OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/package_name"
-  COMMAND ${CMAKE_COMMAND} -E echo "name=${TRAITS_PACKAGE_NAME}" >
-          "${CMAKE_CURRENT_BINARY_DIR}/package_name")
-add_custom_target(package DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${TRAITS_PACKAGE_NAME}"
-                                  "${CMAKE_CURRENT_BINARY_DIR}/package_name")
+add_custom_target(package DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}")
 
 # optional examples
 
