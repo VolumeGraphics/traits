@@ -3,11 +3,10 @@ on:
   push:
     tags:
       - 'v*.*.*'
-    branches:
-      - main
 
 jobs:
   create-release:
+    if: github.ref_name == 'main'
     runs-on: 'ubuntu-24.04'
 
     permissions:
