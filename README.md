@@ -26,7 +26,7 @@ CMake projects might build, install and `find_package(traits)` or use fetch cont
 
 ```cmake
 include(FetchContent)
-FetchContent_Declare(traits URL https://github.com/VolumeGraphics/traits/releases/latest/download/Traits.zip)
+FetchContent_Declare(traits URL https://github.com/VolumeGraphics/traits/releases/latest/download/traits.zip)
 FetchContent_MakeAvailable(traits)
 ```
 
