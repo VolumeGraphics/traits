@@ -54,17 +54,10 @@ add_custom_target(package DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}")
 
 # create a release (by pushing a tag to the repository)
 
-find_program(GIT git REQUIRED)
-find_program(GREP grep REQUIRED)
-
 add_custom_target(
   release
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-  COMMAND "${GIT}" diff-index --quiet HEAD -- # check for uncommitted changes
-  COMMAND "${GIT}" branch --show-current | "${GREP}" -qx main # check for main branch
-  COMMAND "${GIT}" cherry -v origin/main | "${GREP}" grep -q "'^'" # check for unpushed commits
-  COMMAND "${GIT}" tag "v${CMAKE_PROJECT_VERSION}"
-  COMMAND "${GIT}" push "v${CMAKE_PROJECT_VERSION}")
+  COMMAND bash release.sh "${CMAKE_PROJECT_VERSION}")
 
 # optional examples
 
