@@ -62,7 +62,7 @@ add_custom_target(
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
   COMMAND "${GIT}" diff-index --quiet HEAD -- # check for uncommitted changes
   COMMAND "${GIT}" branch --show-current | "${GREP}" -qx main # check for main branch
-  COMMAND "${GIT}" cherry -v origin/main | "${GREP}" grep -q '^' # check for unpushed commits
+  COMMAND "${GIT}" cherry -v origin/main | "${GREP}" grep -q "'^'" # check for unpushed commits
   COMMAND "${GIT}" tag "v${CMAKE_PROJECT_VERSION}"
   COMMAND "${GIT}" push "v${CMAKE_PROJECT_VERSION}")
 
