@@ -52,6 +52,16 @@ add_custom_command(
   WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 add_custom_target(package DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}")
 
+# create a release (by pushing a tag to the repository)
+
+find_program(GIT git REQUIRED)
+
+add_custom_target(
+  release
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  COMMAND "${GIT}" tag "v${CMAKE_PROJECT_VERSION}"
+  COMMAND "${GIT}" push "v${CMAKE_PROJECT_VERSION}")
+
 # optional examples
 
 if(TRAITS_BUILD_EXAMPLES)
