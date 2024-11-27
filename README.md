@@ -929,20 +929,24 @@ The following types are used in the implementation:
 
 ## Open issues
 
-Here is a list of possible improvements, in no particular order:
+Here is a list of possible API improvements, in no particular order:
+- traits: you must define an empty implementation of a trait, even if all methods have default implementations
 - constraints: add support for all boolean operators
 - behaviors: add support for more overloaded operators, esp. `operator<<`
 - function types: add support for noexcept
 - function types: add support for volatile
+- `some<>`: always has a value; use `optional<some<>>` instead or introduce `maybe_some<>`
 - `some<>`: add conversion from `some<>` other type
 - `some<>`: improve syntax for inlined methods
-- implementation: fix internal linkage warning
-- implementation: remove dependency to std::tuple
-- implementation: remove dependency to std::variant
-- implementation: do not use unnamed inline namespaces
-- implementation: move method_kernel into method_name ?
-- implementation: hide non-public stuff in a detail namespace
-- implementation: better check for canonical method names
+
+Here is a list of possible implementation improvements, in no particular order:
+- fix internal linkage warning
+- remove dependency to std::tuple
+- remove dependency to std::variant
+- do not use unnamed inline namespaces
+- move method_kernel into method_name ?
+- hide non-public stuff in a detail namespace
+- better check for canonical method names
 - tests: check macro syntax with method inlining and trait implementations
  
 ## Known limitations
