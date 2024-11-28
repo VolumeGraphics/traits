@@ -15,6 +15,8 @@ This library is inspired by [Rust Traits](https://doc.rust-lang.org/book/ch10-02
 > [!CAUTION]
 > At this point, this library is experimental and it is a pure curiosity.
 > No stability of interface or quality of implementation is guaranteed.
+> Some design decisions are likely to change
+> and have a big effect on the way the library is used.
 > Use at your own risks.
 
 ## Quick Start
