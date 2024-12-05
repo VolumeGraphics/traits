@@ -950,6 +950,7 @@ Here is a list of possible implementation improvements, in no particular order:
 - hide non-public stuff in a detail namespace
 - better check for canonical method names
 - tests: check macro syntax with method inlining and trait implementations
+- document ADRs
  
 ## Known limitations
 
