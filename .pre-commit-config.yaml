@@ -14,3 +14,22 @@ repos:
     hooks:
     - id: check-github-actions
     - id: check-github-workflows
+  - repo: local
+    hooks:
+    - id: cppcheck
+      name: cppcheck
+      entry: cppcheck
+      language: system
+      args:
+        [
+          --clang=clang,
+          --language=c++,
+          --std=c++20,
+          --enable=all,
+          --suppress=unusedFunction,
+          --suppress=unmatchedSuppression,
+          --suppress=missingIncludeSystem,
+          --suppress=toomanyconfigs,
+          --error-exitcode=1,
+        ]
+      files: \.(h|cpp)$
