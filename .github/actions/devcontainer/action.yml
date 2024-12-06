@@ -4,11 +4,9 @@ inputs:
   command:
     description: 'Command to run in the devcontainer'
     required: true
-    type: string
   token:
     description: 'GitHub token'
     required: true
-    type: string
 
 runs:
   using: 'composite'

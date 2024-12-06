@@ -8,4 +8,9 @@ repos:
     rev: v0.6.10
     hooks:
     - id: cmake-format
-    - id: cmake-lint      
+    - id: cmake-lint
+  - repo: https://github.com/sirosen/check-jsonschema
+    rev: 0.30.0
+    hooks:
+    - id: check-github-actions
+    - id: check-github-workflows
