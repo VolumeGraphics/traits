@@ -18,5 +18,6 @@ jobs:
       uses: ./.github/actions/devcontainer
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        command: >
+        command: |
+          cmake -E make_directory build && cmake -B ./build -S .
           pre-commit run --all-files --show-diff-on-failure
