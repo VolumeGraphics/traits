@@ -5,6 +5,10 @@ repos:
     hooks:
     - id: check-github-actions
     - id: check-github-workflows
+  - repo: https://github.com/petalmd/dockerfile-pre-commit
+    rev: v1.0
+    hooks:
+    - id: dockerlint
   - repo: https://github.com/cheshirekow/cmake-format-precommit
     rev: v0.6.10
     hooks:
