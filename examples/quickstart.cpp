@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <format>
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "traits.h"

@@ -8,9 +8,7 @@ RUN apt update && apt upgrade --yes
 # Install additional packages
 
 RUN apt install --yes gcc-14 g++-14
-RUN apt install --yes clang-format pre-commit
-RUN apt install --yes lcov
-RUN apt install --yes cppcheck
+RUN apt install --yes clang-format clang-tidy cppcheck iwyu lcov pre-commit
 
 # Choose default gcc and g++ version
 

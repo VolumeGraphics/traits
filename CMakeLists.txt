@@ -22,6 +22,24 @@ option(TRAITS_BUILD_EXAMPLES "whether or not examples should be built" ON)
 option(TRAITS_BUILD_TESTS "whether or not tests should be built" ON)
 option(TRAITS_TEST_COVERAGE "whether or not test coverage should be generated" OFF)
 
+option(TRAITS_COMPILE_COMMANDS "whether or not to generate compile commands database" ON)
+option(TRAITS_CLANG_TIDY "whether or not clang-tidy should be run" OFF)
+option(TRAITS_INCLUDE_WHAT_YOU_USE "whether or not include-what-you-use should be run" OFF)
+
+if(TRAITS_COMPILE_COMMANDS)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+endif()
+
+if(TRAITS_CLANG_TIDY)
+  find_program(CLANG_TIDY_EXE NAMES clang-tidy REQUIRED)
+  set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXE})
+endif()
+
+if(TRAITS_INCLUDE_WHAT_YOU_USE)
+  find_program(IWYU_EXE NAMES include-what-you-use REQUIRED)
+  set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_EXE})
+endif()
+
 # installation rules
 
 configure_file("cmake/traits-config-version.cmake.in"
