@@ -2,6 +2,7 @@
 #define TRAITS_H_
 
 #include <algorithm>
+#include <array>
 #include <bit>
 #include <cassert>
 #include <cstdint>
@@ -70,19 +71,19 @@ template <typename... Elements>
 structural_tuple(Elements...) -> structural_tuple<Elements...>;
 
 template <typename Element, std::size_t I>
-constexpr const Element& get(const structural_tuple_leaf<I, Element>& m) {
+constexpr auto get(const structural_tuple_leaf<I, Element>& m) -> const Element& {
     return m.e;
 }
 template <typename Element, std::size_t I>
-constexpr Element& get(structural_tuple_leaf<I, Element>& m) {
+constexpr auto get(structural_tuple_leaf<I, Element>& m) -> Element& {
     return m.e;
 }
 template <std::size_t I, typename Element>
-constexpr const Element& get(const structural_tuple_leaf<I, Element>& m) {
+constexpr auto get(const structural_tuple_leaf<I, Element>& m) -> const Element& {
     return m.e;
 }
 template <std::size_t I, typename Element>
-constexpr Element& get(structural_tuple_leaf<I, Element>& m) {
+constexpr auto get(structural_tuple_leaf<I, Element>& m) -> Element& {
     return m.e;
 }
 
@@ -288,8 +289,8 @@ template <std::size_t Index, function_type FunctionType>
 using nth_argument_t = typename nth_argument<Index, FunctionType>::type;
 
 template <std::size_t Index, function_type FunctionType>
-constexpr decltype(auto) forward_arg(
-    std::remove_reference_t<nth_argument_t<Index, FunctionType>>& t) noexcept {
+constexpr auto forward_arg(std::remove_reference_t<nth_argument_t<Index, FunctionType>>& t) noexcept
+    -> decltype(auto) {
     return static_cast<nth_argument_t<Index, FunctionType>&&>(t);
 }
 
@@ -311,7 +312,7 @@ using generic_lambda_result_t = typename generic_lambda_result<lambda, Params...
 
 template <std::size_t Size>
 struct make_overload_set {
-    std::integral_constant<std::size_t, Size> operator()(auto&&...) const { return {}; }
+    auto operator()(auto&&...) const -> std::integral_constant<std::size_t, Size> { return {}; }
 };
 
 template <typename OverloadSet, std::size_t Index, function_type OverloadedType>
@@ -321,7 +322,7 @@ template <typename OverloadSet, std::size_t Index, typename Ret, typename... Arg
 struct add_overload<OverloadSet, Index, Ret(Args...)> {
     struct type : OverloadSet {
         using OverloadSet::operator();
-        std::integral_constant<std::size_t, Index> operator()(Args...) { return {}; }
+        auto operator()(Args...) -> std::integral_constant<std::size_t, Index> { return {}; }
     };
 };
 
@@ -329,7 +330,7 @@ template <typename OverloadSet, std::size_t Index, typename Ret, typename... Arg
 struct add_overload<OverloadSet, Index, Ret(Args...) const> {
     struct type : OverloadSet {
         using OverloadSet::operator();
-        std::integral_constant<std::size_t, Index> operator()(Args...) const { return {}; }
+        auto operator()(Args...) const -> std::integral_constant<std::size_t, Index> { return {}; }
     };
 };
 
@@ -366,16 +367,16 @@ struct method_name {
         // constexpr auto is_not_space = [] (const auto& letter) { return not std::isspace (letter);
         // };
 
-        std::copy_n(str, N, data);
+        std::copy_n(str, N, name.data());
     }
 
     template <typename Ret, typename Object, typename... Args>
     constexpr auto operator=(std::invocable<Ret, Object const&, Args...> auto&& invocable) const;
 
-    constexpr auto begin() const { return data; }
-    constexpr auto end() const { return data + N; }
+    [[nodiscard]] constexpr auto begin() const { return name.data(); }
+    [[nodiscard]] constexpr auto end() const { return name.data() + N; }
 
-    char data[N];
+    std::array<char, N> name;
 };
 }  // namespace methods
 
@@ -518,9 +519,8 @@ constexpr auto operator&&(const Constraint1&, const Constraint2&) noexcept {
 
 template <constraint Constraint1, constraint Constraint2>
 constexpr auto operator||(const Constraint1&, const Constraint2&) noexcept {
-    if constexpr (std::same_as<Constraint1, unconstrained_type>)
-        return unconstrained_type{};
-    else if constexpr (std::same_as<Constraint2, unconstrained_type>)
+    if constexpr (std::same_as<Constraint1, unconstrained_type> or
+                  std::same_as<Constraint2, unconstrained_type>)
         return unconstrained_type{};
     else
         return []<typename T>() {
@@ -595,7 +595,7 @@ struct method {
     };
 
     template <typename Implementation>
-    constexpr method<Method, Kernel, Implementation> operator=(Implementation) const
+    constexpr auto operator=(Implementation) const -> method<Method, Kernel, Implementation>
         requires std::same_as<DefaultImplementation, undefined>
     {
         return {};
@@ -705,7 +705,7 @@ concept has_behavior =
 inline namespace the_trait {
 template <constraint Constraint, behavior... Behaviors>
 struct trait : structural_tuple<Behaviors...> {
-    constexpr trait() noexcept {}
+    constexpr trait() noexcept = default;
     constexpr trait(Behaviors...) noexcept
         requires(sizeof...(Behaviors) > 0)
     {}
@@ -770,7 +770,7 @@ template <constraint Constraint, behavior... Behaviors, method_name MethodName, 
           typename... Args>
 struct trait_invocable_method_index<trait<Constraint, Behaviors...>, MethodName, ObjectPtr, Args...>
     : invocable_method_index<
-          make_method_t<MethodName, std::is_const<std::remove_pointer_t<ObjectPtr>>::value, void,
+          make_method_t<MethodName, std::is_const_v<std::remove_pointer_t<ObjectPtr>>, void,
                         Args...>,
           Behaviors...> {};
 
@@ -889,7 +889,7 @@ using impl_for = implementation_for<decltype(Trait), T>;
 inline namespace the_trait_reference {
 namespace trait_reference_detail {
 template <typename T, constraint Constraint, behavior... Behaviors>
-    requires(not std::is_const<T>::value)
+    requires(not std::is_const_v<T>)
 struct trait_reference_impl {
     constexpr explicit trait_reference_impl(T& object) : reference(object) {}
 
@@ -1076,7 +1076,7 @@ constexpr auto operator""_method() noexcept {
         traits_method_adder_lambda_(name, overloaded_const_method, using Type ::name;, const);    \
                                                                                                   \
         using Type_ = std::remove_const_t<MaybeConstType>;                                        \
-        if constexpr (std::is_const<MaybeConstType>::value and                                    \
+        if constexpr (std::is_const_v<MaybeConstType> and                                         \
                       not ::traits::constness<Signature_>::value)                                 \
             return std::type_identity<Type_>{};                                                   \
         else if constexpr (Overloads_::value)                                                     \
@@ -1141,7 +1141,7 @@ template <std::size_t Size = PointerSize, std::size_t Alignment = DefaultAlignme
              detail::is_multiple_of(Size, Alignment))
 struct alignas(Alignment) buffer {
     constexpr auto memory() -> void* { return data; }
-    constexpr auto memory() const -> const void* { return data; }
+    [[nodiscard]] constexpr auto memory() const -> const void* { return data; }
 
     char data[Size];
 };
@@ -1190,7 +1190,7 @@ constexpr auto operator&&(const Constraint&,
 
 class bad_some_cast : public std::bad_cast {
    public:
-    const char* what() const noexcept override { return "bad some_cast"; }
+    [[nodiscard]] auto what() const noexcept -> const char* override { return "bad some_cast"; }
 };
 
 template <typename Trait, memory InlineBuffer, typename InlinedMethods>
@@ -1233,11 +1233,11 @@ class some_impl {
             this->inlined = std::move(other.inlined);
         }
     }
-    some_impl& operator=(const some_impl& other) noexcept {
+    auto operator=(const some_impl& other) noexcept -> some_impl& {
         some_impl{other}.swap(*this);
         return *this;
     }
-    some_impl& operator=(some_impl&& other) noexcept {
+    auto operator=(some_impl&& other) noexcept -> some_impl& {
         some_impl{std::move(other)}.swap(*this);
         return *this;
     }
@@ -1249,9 +1249,9 @@ class some_impl {
         }
     }
 
-    bool has_value() const noexcept { return this->methods != nullptr; }
+    [[nodiscard]] auto has_value() const noexcept -> bool { return this->methods != nullptr; }
 
-    const std::type_info& type() const noexcept {
+    [[nodiscard]] auto type() const noexcept -> const std::type_info& {
         return has_value() ? this->methods->type() : typeid(void);
     }
 
@@ -1423,7 +1423,7 @@ class some_impl {
 
     template <typename T>
     struct common_methods {
-        static const std::type_info& type() noexcept { return typeid(T); }
+        static auto type() noexcept -> const std::type_info& { return typeid(T); }
     };
 
     template <typename T>
@@ -1470,20 +1470,20 @@ class some_impl {
 
     template <typename T>
     struct inlined_storage
-        : std::integral_constant<bool, std::is_nothrow_move_constructible<T>::value and
+        : std::integral_constant<bool, std::is_nothrow_move_constructible_v<T> and
                                            sizeof(T) <= sizeof(InlineBuffer) and
-                                           std::alignment_of<T>::value <=
-                                               std::alignment_of<InlineBuffer>::value> {};
+                                           std::alignment_of_v<T> <=
+                                               std::alignment_of_v<InlineBuffer>> {};
 
     template <typename T>
-    static constexpr const T& cast(const storage_union& storage) noexcept {
+    static constexpr auto cast(const storage_union& storage) noexcept -> const T& {
         if constexpr (inlined_storage<T>::value)
             return *static_cast<const T*>(storage.inlined.memory());
         else
             return *static_cast<const T*>(storage.dynamic);
     }
     template <typename T>
-    static constexpr T& cast(storage_union& storage) noexcept {
+    static constexpr auto cast(storage_union& storage) noexcept -> T& {
         if constexpr (inlined_storage<T>::value)
             return *static_cast<T*>(storage.inlined.memory());
         else
@@ -1515,7 +1515,7 @@ class some_impl {
     }
 
     template <typename T>
-    static methods_type* methods_for_type() {
+    static auto methods_for_type() -> methods_type* {
         using VTableType = std::conditional_t<inlined_storage<T>::value, inlined_storage_methods<T>,
                                               dynamic_storage_methods<T>>;
 

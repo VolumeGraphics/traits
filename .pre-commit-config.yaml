@@ -53,6 +53,7 @@ repos:
       language: system
       args:
         [
+          --fix-notes,
           -p=build
         ]
       files: \.(h|cpp)$

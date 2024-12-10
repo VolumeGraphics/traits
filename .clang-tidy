@@ -1,2 +1,2 @@
-Checks: '-*,clang-analyzer-*'
+Checks: '-*,clang-analyzer-*,performance-*,portability-*'
 WarningsAsErrors: '*,-clang-analyzer-core.uninitialized.UndefReturn'

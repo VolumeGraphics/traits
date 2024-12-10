@@ -29,7 +29,7 @@ constexpr auto get(impl_for<Drawable, Square>) {
     };
 }
 
-int main() {
+auto main() -> int {
     std::vector<some<Drawable>> someDrawables;
 
     someDrawables.emplace_back(Circle{1.0});

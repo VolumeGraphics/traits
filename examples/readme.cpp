@@ -90,7 +90,7 @@ struct Square {
     double length{0.0};
 };
 
-auto MotivationalExample = test([] {
+const auto MotivationalExample = test([] {
     std::vector<some<Drawable>> someDrawables;
 
     someDrawables.emplace_back(Circle{1.0});
@@ -145,7 +145,7 @@ constexpr auto WithSummary = trait{
 
 // ... you can use a trait
 
-decltype(auto) operator<<(std::ostream& stream, is<Drawable> auto const& drawable) {
+auto operator<<(std::ostream& stream, is<Drawable> auto const& drawable) -> decltype(auto) {
     drawable.draw(stream);
     return stream;
 }
@@ -379,7 +379,7 @@ auto run(is<Action> auto& action) {
 // let's use it
 
 struct SimpleAction {
-    bool run() {
+    auto run() -> bool {
         printSourceLocation();
         return true;
     }
@@ -393,7 +393,7 @@ auto RunSimpleAction = test([] {
 // traits allow you to implement behavior in a non-intrusive manner
 
 struct ForeignAction {
-    enum class Status { Failed, Ok };
+    enum class Status : std::uint8_t { Failed, Ok };
 
     auto execute() {
         if (not ready) return Status::Failed;
@@ -539,13 +539,13 @@ auto FooBar = test([] {
 
     overloadedValueCategory.bar(std::as_const(c));
     overloadedValueCategory.bar(c);
-    overloadedValueCategory.bar(std::move(c));
+    overloadedValueCategory.bar(c);
 
     int i = 0;
 
     overloadedValueCategory.bar(std::as_const(i));
     overloadedValueCategory.bar(i);
-    overloadedValueCategory.bar(std::move(i));
+    overloadedValueCategory.bar(i);
 
     some<OverloadedArity> overloadedArity = Foo{};
 
@@ -577,10 +577,10 @@ template <typename T>
 class EmbeddedList {
    public:
     using iterator = const T*;
-    iterator begin() const;
-    iterator end() const;
-    bool empty() const;
-    T& front();
+    [[nodiscard]] auto begin() const -> iterator;
+    [[nodiscard]] auto end() const -> iterator;
+    [[nodiscard]] auto empty() const -> bool;
+    auto front() -> T&;
     void push_back(T&);
 
     /* ... */
@@ -592,9 +592,9 @@ class GeoConstraintIF : public EmbeddedListNode<GeoConstraintIF> {
     virtual ~GeoConstraintIF() = default;
 
     void setBreaking(bool breaking) { mBreaking = breaking; }
-    bool isBreaking() const { return mBreaking; }
+    [[nodiscard]] auto isBreaking() const -> bool { return mBreaking; }
 
-    virtual bool checkPoint(const Vector3i& point) const = 0;
+    [[nodiscard]] virtual auto checkPoint(const Vector3i& point) const -> bool = 0;
 
    private:
     bool mBreaking{false};
@@ -608,7 +608,7 @@ class RegionGrowerIF {
         }
     }
 
-    bool addGeoConstraint(GeoConstraintIF* constraint) {
+    auto addGeoConstraint(GeoConstraintIF* constraint) -> bool {
         if (! constraint) {
             return false;
         }
@@ -617,13 +617,12 @@ class RegionGrowerIF {
         return true;
     }
 
-   private:
     // don't know how to copy the constraints ...
     RegionGrowerIF(RegionGrowerIF const& other) = delete;
-    RegionGrowerIF& operator=(RegionGrowerIF const& other) = delete;
+    auto operator=(RegionGrowerIF const& other) -> RegionGrowerIF& = delete;
 
    protected:
-    bool checkGeoConstraints(Vector3i const& point) {
+    auto checkGeoConstraints(Vector3i const& point) -> bool {
         for (const auto& constraint : mGeoConstraints)
             if (not constraint.checkPoint(point)) return false;
 
@@ -653,7 +652,7 @@ class RegionGrower {
     }
 
    protected:
-    bool checkGeoConstraints(Vector3i const& point) {
+    auto checkGeoConstraints(Vector3i const& point) -> bool {
         return std::ranges::all_of(mGeoConstraints,
                                    [&](auto const& constraint) { return constraint.check(point); });
     }
@@ -672,7 +671,7 @@ class RegionGrower {
 
 struct Breakable {
     constexpr void setBreaking(bool breaking) { mBreaking = breaking; }
-    constexpr bool isBreaking() const { return mBreaking; }
+    [[nodiscard]] constexpr auto isBreaking() const -> bool { return mBreaking; }
 
    private:
     bool mBreaking{false};
@@ -688,14 +687,14 @@ static_assert(sizeof(Breakable) == 112);
 
 template <Vector3i Low>
 struct GreaterOrEqual : Breakable {
-    bool check(const Vector3i& point) const {
+    [[nodiscard]] auto check(const Vector3i& point) const -> bool {
         return point.x >= Low.x and point.y >= Low.y and point.z >= Low.z;
     }
 };
 
 template <Vector3i High>
 struct LessOrEqual : Breakable {
-    bool check(const Vector3i& point) const {
+    [[nodiscard]] auto check(const Vector3i& point) const -> bool {
         return point.x <= High.x and point.y <= High.y and point.z <= High.z;
     }
 };
@@ -713,7 +712,7 @@ class TestableRegionGrower : public RegionGrower {
     }
 
    public:
-    static bool test() {
+    static auto test() -> bool {
         auto regionGrower = makeRegionGrower();
         return regionGrower.checkGeoConstraints(Vector3i{0, 1, 2});
     }
@@ -731,7 +730,7 @@ namespace with_stronger_coupling {
 
 struct GeoConstraintIF {
     constexpr void setBreaking(bool breaking) { mBreaking = breaking; }
-    constexpr bool isBreaking() const { return mBreaking; }
+    [[nodiscard]] constexpr auto isBreaking() const -> bool { return mBreaking; }
 
    private:
     bool mBreaking{false};
@@ -750,7 +749,7 @@ class RegionGrower {
     }
 
    protected:
-    bool checkGeoConstraints(Vector3i const& point) {
+    auto checkGeoConstraints(Vector3i const& point) -> bool {
         return std::ranges::all_of(mGeoConstraints,
                                    [&](auto const& constraint) { return constraint.check(point); });
     }
@@ -765,14 +764,14 @@ class RegionGrower {
 
 template <Vector3i Low>
 struct GreaterOrEqual : GeoConstraintIF {
-    bool check(const Vector3i& point) const {
+    [[nodiscard]] auto check(const Vector3i& point) const -> bool {
         return point.x >= Low.x and point.y >= Low.y and point.z >= Low.z;
     }
 };
 
 template <Vector3i High>
 struct LessOrEqual : GeoConstraintIF {
-    bool check(const Vector3i& point) const {
+    [[nodiscard]] auto check(const Vector3i& point) const -> bool {
         return point.x <= High.x and point.y <= High.y and point.z <= High.z;
     }
 };
@@ -841,7 +840,7 @@ auto PrintName = test([] {
 #pragma clang diagnostic pop
 #endif
 
-int main() {
+auto main() -> int {
     using namespace trait_examples;
 
     test::run_all();
