@@ -19,16 +19,6 @@ repos:
     hooks:
     - id: clang-format
       types_or: [c++]
-  # - repo: https://github.com/pocc/pre-commit-hooks
-  #   rev: v1.3.5
-  #   hooks:
-  #   - id: clang-tidy
-  #     args: [-p=build]
-  #     files: \.(h|cpp)$
-#    - id: oclint
-#    - id: cppcheck
-#    - id: cpplint
-#    - id: include-what-you-use
   - repo: local
     hooks:
     - id: cppcheck
@@ -46,6 +36,15 @@ repos:
           --suppress=missingIncludeSystem,
           --suppress=toomanyconfigs,
           --error-exitcode=1,
+        ]
+      files: \.(h|cpp)$
+    - id: include-what-you-use
+      name: include-what-you-use
+      entry: iwyu_tool
+      language: system
+      args:
+        [
+          -p=build
         ]
       files: \.(h|cpp)$
     - id: clang-tidy
