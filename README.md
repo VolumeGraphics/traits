@@ -22,7 +22,7 @@ This library is inspired by [Rust Traits](https://doc.rust-lang.org/book/ch10-02
 ## Quick Start
 
 *traits* is a single header C++20 library. To use the library, make sure you meet the [minimum requirements](#minimum-requirements) and just include the header file [traits.h](https://github.com/VolumeGraphics/traits/blob/main/include/traits.h) in your source code.
-Alternatively, you can first try it out in [Compiler Explorer](https://godbolt.org/z/be31xGjrK).
+Alternatively, you can first try it out in [Compiler Explorer](https://godbolt.org/z/Eh5nKr3jT).
 
 CMake projects might build, install and `find_package(traits)` or use fetch content:
 
@@ -37,46 +37,45 @@ There are currently no plans to support [vcpkg](https://learn.microsoft.com/en-u
 ### Canonical usage example
 
 ```c++
-#include <format>
 #include <iostream>
+#include <numbers>
 #include <vector>
 
 #include "traits.h"
 using namespace traits;
 
-constexpr auto Drawable = trait{
-    TRAITS_METHOD(draw, void(std::ostream& stream) const)
-};
-
 struct Circle {
-  double radius{ 0.0 };
+    double radius{0.0};
 };
-
-constexpr auto get(impl_for<Drawable, Circle>) {
-  return "draw"_method = [](Circle const& circle, std::ostream& stream) {
-    stream << std::format("Circle {{ radius = {} }}\n", circle.radius);
-    };
-}
 
 struct Square {
-  double length{ 0.0 };
+    double length{0.0};
 };
 
-constexpr auto get(impl_for<Drawable, Square>) {
-  return "draw"_method = [](Square const& square, std::ostream& stream) {
-    stream << std::format("Square {{ length = {} }}\n", square.length);
+constexpr auto Shape = trait{
+    TRAITS_METHOD(area, double() const),
+};
+
+constexpr auto get(impl_for<Shape, Circle>) {
+    return "area"_method = [](Circle const& circle) {
+        return std::numbers::pi * circle.radius * circle.radius;
     };
 }
 
-int main()
-{
-  std::vector<some<Drawable>> someDrawables;
+constexpr auto get(impl_for<Shape, Square>) {
+    return "area"_method = [](Square const& square) {
+        return square.length * square.length;
+    };
+}
 
-  someDrawables.emplace_back(Circle{ 1.0 });
-  someDrawables.emplace_back(Square{ 2.0 });
+int main() {
+    std::vector<some<Shape>> someShapes;
 
-  for (auto const& drawable : someDrawables)
-    drawable.draw(std::cout);
+    someShapes.emplace_back(Circle{1.0});
+    someShapes.emplace_back(Square{1.0});
+
+    for (auto const& shape : someShapes)
+        std::cout << "Shape with area " << shape.area() << "\n";
 }
 ```
 

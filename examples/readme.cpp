@@ -54,7 +54,8 @@ struct test {
     test(auto callable) { tests.emplace_back(callable); }
 
     static void run_all() {
-        for (auto const& test : tests) test();
+        for (auto const& test : tests)
+            test();
     }
 
    private:
@@ -96,7 +97,8 @@ const auto MotivationalExample = test([] {
     someDrawables.emplace_back(Circle{1.0});
     someDrawables.emplace_back(Square{2.0});
 
-    for (auto const& drawable : someDrawables) drawable.draw(std::cout);
+    for (auto const& drawable : someDrawables)
+        drawable.draw(std::cout);
 });
 
 // traits step by step
@@ -503,7 +505,8 @@ auto InvokeCallbacks = test([] {
     someCallbacks.emplace_back(FirstCallback{});
     someCallbacks.emplace_back(SecondCallback{});
 
-    for (auto& callback : someCallbacks) callback();
+    for (auto& callback : someCallbacks)
+        callback();
 });
 
 // last example
