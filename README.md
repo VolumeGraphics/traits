@@ -36,6 +36,10 @@ There are currently no plans to support [vcpkg](https://learn.microsoft.com/en-u
 
 ### Canonical usage example
 
+Let's assume that we have a set of types representing different shapes.
+We can use a trait to model the behavior that all shapes have in common, such as calculating the area.
+This behavior can then be defined individually for each type and does not need to be part of the original type definition:
+
 ```c++
 #include <iostream>
 #include <numbers>
