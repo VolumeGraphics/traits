@@ -5,9 +5,13 @@ FROM mcr.microsoft.com/devcontainers/cpp:ubuntu-24.04
 
 RUN apt-get update \
     && apt-get upgrade --yes \
-    && apt-get install --yes --no-install-recommends adr-tools clang-format clang-tidy cppcheck gcc-14 g++-14 iwyu lcov pre-commit \
+    && apt-get install --yes --no-install-recommends adr-tools clang-format clang-tidy cppcheck gcc-14 g++-14 iwyu lcov pipx pre-commit \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Ensure pipx is in PATH
+
+RUN pipx ensurepath
 
 # Choose default gcc and g++ version
 
