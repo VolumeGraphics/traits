@@ -119,6 +119,7 @@ This implementation shows once again that polymorphism can be easily combined wi
 There have been some exciting projects dedicated to this topic for a long time:
 - [Dyno: Runtime polymorphism done right](https://github.com/ldionne/dyno)
 - [Boost.TypeErasure](https://www.boost.org/doc/libs/1_86_0/doc/html/boost_typeerasure.html)
+- [Cpp Dyn](https://github.com/qnope/CppDyn)
 - ...
 
 But new implementations are also emerging more recently, e.g. [Proxy: Next Generation Polymorphism in C++](https://github.com/microsoft/proxy).
