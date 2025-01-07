@@ -122,7 +122,10 @@ There have been some exciting projects dedicated to this topic for a long time:
 - [Cpp Dyn](https://github.com/qnope/CppDyn)
 - ...
 
-But new implementations are also emerging more recently, e.g. [Proxy: Next Generation Polymorphism in C++](https://github.com/microsoft/proxy).
+But new implementations are also emerging more recently:
+- [AnyAny](https://github.com/kelbon/AnyAny)
+- [Proxy: Next Generation Polymorphism in C++](https://github.com/microsoft/proxy)
+- [Erased](https://github.com/qnope/erased)
 
 Ideas for offering this feature at the language level seem to make the most sense:
 - [Typeclasses in C++](https://github.com/TartanLlama/typeclasses)
