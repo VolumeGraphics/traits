@@ -119,7 +119,11 @@ This implementation shows once again that polymorphism can be easily combined wi
 There have been some exciting projects dedicated to this topic for a long time:
 - [Dyno: Runtime polymorphism done right](https://github.com/ldionne/dyno)
 - [Boost.TypeErasure](https://www.boost.org/doc/libs/1_86_0/doc/html/boost_typeerasure.html)
+- [TE](https://github.com/boost-ext/te)
+- [Folly/Poly](https://github.com/facebook/folly/blob/main/folly/docs/Poly.md)
+- [EnTT/poly](https://github.com/skypjack/entt/blob/master/docs/md/poly.md)
 - [Cpp Dyn](https://github.com/qnope/CppDyn)
+- [Traits](https://github.com/Morglod/cpp_traits)
 - ...
 
 But new implementations are also emerging more recently:
